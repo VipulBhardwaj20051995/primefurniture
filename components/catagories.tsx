@@ -5,8 +5,10 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const categories = [
   { name: "Beds", icon: "🛏️" },
-  { name: "Carpets", icon: "🧶" },
   { name: "Chair", icon: "🪑" },
+  { name: "Sofa", icon: "🛋️" },
+  { name: "Table", icon: "📝" },
+  { name: "Decor", icon: "🖼️" },
   { name: "Sofa", icon: "🛋️" },
   { name: "Table", icon: "📝" },
   { name: "Decor", icon: "🖼️" },

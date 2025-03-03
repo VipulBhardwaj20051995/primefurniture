@@ -1,5 +1,6 @@
 import { Button } from "@aws-amplify/ui-react";
 import React from "react";
+import { FaArrowRight } from "react-icons/fa";
 
 const Hero4 = () => {
   const products = [
@@ -19,21 +20,31 @@ const Hero4 = () => {
       image: "/chair.png",
     },
     {
-      title: "New",
-      description: "Exclusive and stylish new furniture collection.",
-      image: "/chair.png",
+      title: "Table",
+      description: "Elegant and sturdy dining table, perfect for your home.",
+      image: "/table.png",
+    },
+    {
+      title: "Bed",
+      description: "Premium quality bed with a modern aesthetic.",
+      image: "/bed.png",
+    },
+    {
+      title: "Wardrobe",
+      description: "Spacious wardrobe with stylish design and durability.",
+      image: "/wardrobe.png",
     },
   ];
 
   return (
-    <div className="w-full p-6 border rounded-lg bg-gray-100">
-      <h3 className="text-red-500 font-semibold">Featured</h3>
-      <h2 className="text-2xl font-bold">New Arrival</h2>
-      <div className="flex space-x-4 mt-4 overflow-hidden overflow-x-auto">
+    <div className="w-full p-6 border rounded-lg bg-gray-50 shadow-lg">
+      <h3 className="text-red-500 font-semibold">Featured Collection</h3>
+      <h2 className="text-3xl font-bold text-gray-800">New Arrivals</h2>
+      <div className="flex space-x-6 mt-6 overflow-hidden overflow-x-auto scrollbar-hide p-2">
         {products.map((product, index) => (
           <div
             key={index}
-            className="bg-black text-white rounded-lg relative w-80 flex-shrink-0 p-4"
+            className="bg-white text-black rounded-lg w-72 flex-shrink-0 p-4 shadow-md hover:shadow-xl transition transform hover:scale-105"
           >
             <div className="w-full flex justify-center">
               <img
@@ -43,16 +54,14 @@ const Hero4 = () => {
                 onError={(e) => (e.currentTarget.src = "/default-image.png")}
               />
             </div>
-            <div className="absolute top-3 left-3 text-sm bg-white text-black px-2 py-1 rounded">
+            <div className="absolute top-3 left-3 text-xs bg-red-500 text-white px-2 py-1 rounded">
               {product.title}
             </div>
             <div className="p-4">
-              <h3 className="text-lg font-bold">{product.title}</h3>
-              <p className="text-gray-300">{product.description}</p>
-              <Button
-                className="mt-3 bg-white text-black px-6 py-2 rounded-full font-semibold"
-              >
-                Shop Now
+              <h3 className="text-lg font-bold text-gray-800">{product.title}</h3>
+              <p className="text-gray-600 text-sm">{product.description}</p>
+              <Button className="mt-3 bg-red-500 text-white px-6 py-2 rounded-full font-semibold flex items-center gap-2 hover:bg-red-600 transition">
+                Shop Now <FaArrowRight />
               </Button>
             </div>
           </div>

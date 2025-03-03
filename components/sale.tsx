@@ -7,11 +7,15 @@ const products = [
   { name: "HAVIT HV-G92 Sofa", price: "$120", oldPrice: "$160", discount: "-40%", rating: 88, image: "sofa.png" },
   { name: "AK-900 Carpets", price: "$960", oldPrice: "$1160", discount: "-35%", rating: 75, image: "carpet.png" },
   { name: "Premium Chair", price: "$370", oldPrice: "$400", discount: "-30%", rating: 99, image: "chair.png" },
-  { name: "S-Series Comfort Chair", price: "$375", oldPrice: "$400", discount: "-25%", rating: 99, image: "sofa1.png" },
+  { name: "Comfort Chair", price: "$375", oldPrice: "$400", discount: "-25%", rating: 99, image: "sofa1.png" },
+  { name: "HAVIT HV-G92 Sofa", price: "$120", oldPrice: "$160", discount: "-40%", rating: 88, image: "sofa.png" },
+  { name: "AK-900 Carpets", price: "$960", oldPrice: "$1160", discount: "-35%", rating: 75, image: "carpet.png" },
+ 
+  
 ];
 
 export const Sale = () => {  
-  const scrollRef = useRef(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [timeLeft, setTimeLeft] = useState({ days: 3, hours: 23, minutes: 19, seconds: 56 });
 
   useEffect(() => {
@@ -28,48 +32,63 @@ export const Sale = () => {
     return () => clearInterval(timer);
   }, []);
 
+  const scroll = (direction: string) => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({
+        left: direction === "left" ? -300 : 300,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <div className="w-full p-4">
       <h2 className="text-red-600 text-sm font-semibold">Today's</h2>
       <h1 className="text-2xl font-bold mb-4">Flash Sales</h1>
-      <div className="flex space-x-4 mb-4">
-        <p>Days: {timeLeft.days}</p>
-        <p>Hours: {timeLeft.hours}</p>
-        <p>Minutes: {timeLeft.minutes}</p>
-        <p>Seconds: {timeLeft.seconds}</p>
+
+      {/* Timer UI */}
+      <div className="flex space-x-4 mb-4 text-lg font-semibold text-red-500">
+        <p>{timeLeft.days}d</p>
+        <p>{timeLeft.hours}h</p>
+        <p>{timeLeft.minutes}m</p>
+        <p>{timeLeft.seconds}s</p>
       </div>
+
+      {/* Product Carousel */}
       <div className="relative flex items-center w-full">
-        <button className="absolute left-0 p-2 bg-white shadow-md rounded-full z-10">
+        <button onClick={() => scroll("left")} className="absolute left-0 p-3 bg-white shadow-md rounded-full z-10">
           <FaArrowLeft />
         </button>
+        
         <div ref={scrollRef} className="flex space-x-6 overflow-x-auto scrollbar-hide px-8 w-full" style={{ scrollBehavior: "smooth", whiteSpace: "nowrap" }}>
           {products.map((product, index) => (
-            <Card key={index} className="w-64 h-auto flex flex-col shadow-lg rounded-lg overflow-hidden relative">
+            <Card key={index} className="w-48 flex flex-col shadow-md rounded-lg overflow-hidden relative bg-white">
               <CardHeader className="bg-gray-100 relative flex justify-center items-center">
                 <span className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">{product.discount}</span>
-                <img src={product.image} alt={product.name} className="w-full h-40 object-contain" />
+                <img src={product.image} alt={product.name} className="w-full h-32 object-cover" />
               </CardHeader>
-              <CardBody className="p-4 flex flex-col items-center text-center">
-                <p className="text-sm font-semibold mb-1">{product.name}</p>
-                <p className="text-red-500 text-lg font-bold">{product.price} <span className="text-gray-400 line-through text-sm">{product.oldPrice}</span></p>
-                <p className="text-yellow-500 text-sm">⭐ {product.rating}</p>
-                <div className="flex justify-between mt-3 w-full px-4">
-                  <button className="p-2 bg-gray-200 rounded-full"><FaHeart size={16} /></button>
-                  <button className="p-2 bg-gray-200 rounded-full"><FaEye size={16} /></button>
-                  <Button radius="full" className="bg-black text-white px-4 py-2 text-sm">Add To Cart</Button>
+              <CardBody className="p-3 text-center">
+                <p className="text-sm font-semibold">{product.name}</p>
+                <p className="text-red-500 font-bold">{product.price} <span className="text-gray-400 line-through text-xs">{product.oldPrice}</span></p>
+                <p className="text-yellow-500 text-xs">⭐ {product.rating}</p>
+                <div className="flex justify-between mt-3">
+                  <button className="p-2 bg-gray-200 rounded-full"><FaHeart size={14} /></button>
+                  <button className="p-2 bg-gray-200 rounded-full"><FaEye size={14} /></button>
+                  <Button radius="full" className="bg-black text-white px-3 py-1 text-xs">Add</Button>
                 </div>
               </CardBody>
-              <CardFooter className="flex justify-between p-2 text-xs text-gray-500">
-                <p>Hurry Up</p>
-                <p>41:00</p>
+              <CardFooter className="text-xs text-gray-500 p-2 text-center">
+                Hurry! Limited Time.
               </CardFooter>
             </Card>
           ))}
         </div>
-        <button className="absolute right-0 p-2 bg-white shadow-md rounded-full z-10">
+
+        <button onClick={() => scroll("right")} className="absolute right-0 p-3 bg-white shadow-md rounded-full z-10">
           <FaArrowRight />
         </button>
       </div>
+
       <div className="flex justify-center mt-4">
         <Button radius="full" className="bg-red-500 text-white px-4 py-2 text-sm">View All Products</Button>
       </div>
