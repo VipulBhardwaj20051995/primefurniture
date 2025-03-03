@@ -3,6 +3,10 @@ backend:
   phases:
     build:
       commands:
+        - echo "NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL" >> .env
+        - echo "NEXT_PUBLIC_STRIPE_PUBLIC_KEY=$NEXT_PUBLIC_STRIPE_PUBLIC_KEY" >> .env
+        - echo "NEXT_PUBLIC_LIGHT_STRIPE_PRICING_TABLE_ID=$NEXT_PUBLIC_LIGHT_STRIPE_PRICING_TABLE_ID" >> .env
+        - echo "NEXT_PUBLIC_DARK_STRIPE_PRICING_TABLE_ID=$NEXT_PUBLIC_DARK_STRIPE_PRICING_TABLE_ID" >> .env
         - npm ci --cache .npm --prefer-offline
         - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
 frontend:
