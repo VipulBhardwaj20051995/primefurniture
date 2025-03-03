@@ -1,8 +1,8 @@
+/** @jsxImportSource react */
 "use client";
 
 import { Blank } from "@/components/blank";
 import { Catagories } from "@/components/catagories";
-import { Counter } from "@/components/counter";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";import { Hero2 } from "@/components/hero2";
