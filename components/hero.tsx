@@ -2,44 +2,16 @@ import { Button } from "@heroui/button";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState } from "react";
+import { FiChevronRight } from "react-icons/fi"; // Added for dropdown effect
+import { FaCouch, FaChair, FaBed, FaLightbulb, FaTree } from "react-icons/fa"; // Sample icons
 
 const categories = [
-  {
-    name: "Home Decor",
-    subcategories: ["Luxury", "Affordable", "Premium", "Chinese", "Japani", "American", "Indian"],
-  },
-  {
-    name: "Carpets",
-    subcategories: ["Luxury", "Affordable", "Premium", "Handmade", "Machine-made"],
-  },
-  {
-    name: "Chairs",
-    subcategories: ["Luxury", "Affordable", "Premium", "Wooden", "Plastic", "Office Chairs"],
-  },
-  {
-    name: "Sofa",
-    subcategories: ["Luxury", "Affordable", "Premium", "Leather", "Fabric", "Wooden"],
-  },
-  {
-    name: "Carpets Set",
-    subcategories: ["Luxury", "Affordable", "Premium", "Handmade", "Machine-made"],
-  },
-  {
-    name: "Chairs Set",
-    subcategories: ["Luxury", "Affordable", "Premium", "Wooden", "Plastic", "Office Chairs"],
-  },
-  {
-    name: "Sofa Set",
-    subcategories: ["Luxury", "Affordable", "Premium", "Leather", "Fabric", "Wooden"],
-  },
-  {
-    name: "Wooden Furniture",
-    subcategories: ["Luxury", "Affordable", "Premium", "Wooden", "Plastic", "Office Chairs"],
-  },
-  {
-    name: "Tabels",
-    subcategories: ["Luxury", "Affordable", "Premium", "Leather", "Fabric", "Wooden"],
-  },
+  { name: "Home Decor", icon: <FaLightbulb />, subcategories: ["Luxury", "Affordable", "Premium", "Handmade", "Vintage", "Boho"] },
+  { name: "Chairs & Seating", icon: <FaChair />, subcategories: ["Office Chairs", "Recliners", "Gaming Chairs", "Bean Bags"] },
+  { name: "Sofas & Couches", icon: <FaCouch />, subcategories: ["Leather", "Fabric", "Wooden", "L-Shaped", "Convertible"] },
+  { name: "Dining Sets", icon: <FaCouch />, subcategories: ["Luxury", "Wooden", "Glass-Top", "Modern", "Classic"] },
+  { name: "Bedroom Furniture", icon: <FaBed />, subcategories: ["Beds", "Wardrobes", "Side Tables", "Dressing Table"] },
+  { name: "Outdoor & Patio", icon: <FaTree />, subcategories: ["Garden Chairs", "Swings", "Umbrellas", "Outdoor Sofas"] },
 ];
 
 export const Hero = () => {
@@ -49,25 +21,28 @@ export const Hero = () => {
   return (
     <section className="relative w-full h-[70vh] flex">
       {/* Sidebar Category */}
-      <aside className="w-1/4 bg-white dark:bg-gray-900 p-6 shadow-lg relative">
-        <ul className="space-y-3">
+      <aside className="w-1/5 bg-white dark:bg-gray-900 p-5 shadow-lg rounded-lg">
+        <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Categories</h3>
+        <ul className="space-y-2">
           {categories.map((category, index) => (
             <li
               key={index}
-              className="relative cursor-pointer text-base font-medium transition-colors duration-300 hover:text-red-500 text-gray-700 dark:text-gray-300"
+              className="relative flex items-center justify-between text-base font-semibold text-gray-700 dark:text-gray-300 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300"
               onMouseEnter={() => setHoveredCategory(category.name)}
               onMouseLeave={() => setHoveredCategory(null)}
             >
-              {category.name}
+              <div className="flex items-center space-x-2">
+                {category.icon} <span>{category.name}</span>
+              </div>
+              <FiChevronRight className="text-gray-500" />
 
               {/* Dropdown Menu */}
               {hoveredCategory === category.name && (
-                <ul className="absolute left-full top-0 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md p-2 
-                  transition-opacity duration-200 z-50 border border-gray-200 dark:border-gray-700">
+                <ul className="absolute left-full top-0 w-52 bg-white dark:bg-gray-800 shadow-lg rounded-md p-2 border border-gray-200 dark:border-gray-700 transition-opacity duration-300 z-50">
                   {category.subcategories.map((sub, i) => (
                     <li
                       key={i}
-                      className="text-sm text-gray-700 dark:text-gray-300 hover:text-red-500 py-1 cursor-pointer transition-colors"
+                      className="text-sm text-gray-700 dark:text-gray-300 hover:text-red-500 py-1 px-3 cursor-pointer transition"
                     >
                       {sub}
                     </li>
@@ -80,11 +55,11 @@ export const Hero = () => {
       </aside>
 
       {/* Hero Section */}
-      <div className="relative w-3/4 flex items-center justify-center text-center bg-black">
+      <div className="relative w-4/5 flex items-center justify-center text-center bg-black">
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image
-            src="/hero.png" // Replace with actual image path
+            src="/hero.png"
             alt="Furniture Display"
             layout="fill"
             objectFit="cover"
