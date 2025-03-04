@@ -23,7 +23,6 @@ import {
 } from "@heroui/dropdown";
 
 import { useAuthenticator } from '@aws-amplify/ui-react'
-import { ThemeSwitch } from "@/components/theme-switch";
 import clsx from "clsx";
 import { siteConfig } from "@/config/site";
 import { link as linkStyles } from "@heroui/theme";
@@ -71,9 +70,6 @@ export const Navigation = () => {
         justify="end"
       >
         <NavbarItem className="hidden sm:flex gap-2">
-          <ThemeSwitch />
-        </NavbarItem>
-        <NavbarItem className="hidden sm:flex gap-2">
           <Badge color="danger" content="1" shape="circle">
             <Button isIconOnly  radius="full" variant="light">
               <FiShoppingBag size={24} />
@@ -113,7 +109,6 @@ export const Navigation = () => {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <ThemeSwitch />
         <NavbarMenuToggle />
       </NavbarContent>
       <NavbarMenu>
