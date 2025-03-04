@@ -37,13 +37,15 @@ const Hero4 = () => {
   ];
 
   return (
-    <div className="w-full p-6 border rounded-lg bg-gray-50 shadow-lg">
+    <div className="w-full p-6 border rounded-lg bg-darkgray-50 shadow-lg">
       <h3 className="text-red-500 font-semibold">Featured Collection</h3>
       <h2 className="text-3xl font-bold text-gray-800">New Arrivals</h2>
       <div className="flex space-x-6 mt-6 overflow-hidden overflow-x-auto scrollbar-hide p-2">
         {products.map((product, index) => (
           <div
             key={index}
+            style={{ backgroundColor: "#f0f0f0" }} // Change to any color you want
+
             className="bg-white text-black rounded-lg w-72 flex-shrink-0 p-4 shadow-md hover:shadow-xl transition transform hover:scale-105"
           >
             <div className="w-full flex justify-center">

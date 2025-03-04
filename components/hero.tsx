@@ -2,16 +2,16 @@ import { Button } from "@heroui/button";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState } from "react";
-import { FiChevronRight } from "react-icons/fi"; // Added for dropdown effect
-import { FaCouch, FaChair, FaBed, FaLightbulb, FaTree } from "react-icons/fa"; // Sample icons
+import { FiChevronRight } from "react-icons/fi";
+import { FaCouch, FaChair, FaBed, FaLightbulb, FaTree } from "react-icons/fa";
 
 const categories = [
   { name: "Home Decor", icon: <FaLightbulb />, subcategories: ["Luxury", "Affordable", "Premium", "Handmade", "Vintage", "Boho"] },
+  { name: "Carpets & Rugs", icon: <FaCouch />, subcategories: ["Luxury", "Affordable", "Persian", "Woolen", "Silk", "Shaggy"] },
   { name: "Chairs & Seating", icon: <FaChair />, subcategories: ["Office Chairs", "Recliners", "Gaming Chairs", "Bean Bags"] },
   { name: "Sofas & Couches", icon: <FaCouch />, subcategories: ["Leather", "Fabric", "Wooden", "L-Shaped", "Convertible"] },
   { name: "Dining Sets", icon: <FaCouch />, subcategories: ["Luxury", "Wooden", "Glass-Top", "Modern", "Classic"] },
   { name: "Bedroom Furniture", icon: <FaBed />, subcategories: ["Beds", "Wardrobes", "Side Tables", "Dressing Table"] },
-  { name: "Outdoor & Patio", icon: <FaTree />, subcategories: ["Garden Chairs", "Swings", "Umbrellas", "Outdoor Sofas"] },
 ];
 
 export const Hero = () => {
@@ -19,9 +19,9 @@ export const Hero = () => {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
 
   return (
-    <section className="relative w-full h-[70vh] flex">
-      {/* Sidebar Category */}
-      <aside className="w-1/5 bg-white dark:bg-gray-900 p-5 shadow-lg rounded-lg">
+    <section className="relative w-full h-[70vh] flex flex-col md:flex-row">
+      {/* Sidebar Category - Hidden on Mobile */}
+      <aside className="hidden md:block md:w-1/5 lg:w-1/5 bg-white dark:bg-gray-900 p-5 shadow-lg rounded-lg">
         <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Categories</h3>
         <ul className="space-y-2">
           {categories.map((category, index) => (
@@ -34,11 +34,11 @@ export const Hero = () => {
               <div className="flex items-center space-x-2">
                 {category.icon} <span>{category.name}</span>
               </div>
-              <FiChevronRight className="text-gray-500" />
+              <FiChevronRight className="text-gray-500 hidden md:inline-block" />
 
               {/* Dropdown Menu */}
               {hoveredCategory === category.name && (
-                <ul className="absolute left-full top-0 w-52 bg-white dark:bg-gray-800 shadow-lg rounded-md p-2 border border-gray-200 dark:border-gray-700 transition-opacity duration-300 z-50">
+                <ul className="absolute md:left-full left-0 top-full md:top-0 w-full md:w-52 min-w-full bg-white dark:bg-gray-800 shadow-lg rounded-md p-2 border border-gray-200 dark:border-gray-700 transition-opacity duration-300 z-50">
                   {category.subcategories.map((sub, i) => (
                     <li
                       key={i}
@@ -54,8 +54,8 @@ export const Hero = () => {
         </ul>
       </aside>
 
-      {/* Hero Section */}
-      <div className="relative w-4/5 flex items-center justify-center text-center bg-black">
+      {/* Hero Section - Full Width on Mobile */}
+      <div className="relative w-full flex-1 flex items-center justify-center text-center bg-black">
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image
