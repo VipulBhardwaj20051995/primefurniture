@@ -8,6 +8,7 @@ import { FiShoppingCart } from "react-icons/fi";
 import { Product, ProductCard } from "@/components/product-card";
 import { CartDrawer } from "@/components/cart-drawer";
 import { useCartStore } from "@/store/cart";
+import { useSearchParams } from "next/navigation";
 
 // Sample product data (move this to a dedicated file later)
 const products: Product[] = [
@@ -297,11 +298,20 @@ const products: Product[] = [
 const categories: string[] = ["all", "chairs", "tables", "sofas", "beds"];
 
 export default function ShopPage() {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
   const [selectedCategory, setSelectedCategory] = React.useState("all");
   const { cartItems, isCartOpen, toggleCart, addToCart, updateQuantity, removeItem } = useCartStore();
 
   const filteredProducts = products.filter(
-    (product) => selectedCategory === "all" || product.category === selectedCategory
+    (product) => {
+      const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
+      const matchesSearch = !searchQuery || 
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      return matchesCategory && matchesSearch;
+    }
   );
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
