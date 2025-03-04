@@ -8,6 +8,8 @@ const categories = [
   { name: "Sofa", icon: "🛋️" },
   { name: "Table", icon: "📝" },
   { name: "Decor", icon: "🎮" },
+  { name: "Table", icon: "📝" },
+  { name: "Decor", icon: "🎮" },
 ];
 
 export const Catagories = () => {

@@ -41,7 +41,7 @@ export default function RootLayout({
         "min-h-screen bg-background font-sans antialiased",
         fontSans.variable,
       )}>
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
           <AmplifyConfig />
           <Banner />
           <Navigation />
