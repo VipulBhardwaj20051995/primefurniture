@@ -2,8 +2,8 @@ import { Inter } from "next/font/google";
 import "../styles/globals.css"; 
 import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
+import { Providers } from "./providers"; // Import your Providers
 import ClientLayout from "../components/client-layout";
-import { Banner } from "@/components/banner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,8 +26,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Banner />
-        <ClientLayout>{children}</ClientLayout>
+        <Providers>
+          <ClientLayout>{children}</ClientLayout>
+        </Providers>
       </body>
     </html>
   );

@@ -3,12 +3,8 @@
 import React from "react";
 import { CartDrawer } from "./cart-drawer";
 import { useCartStore } from "@/store/cart";
-import { Navigation } from "./navigation"; // or Header if you prefer
-
-// If the file is at /app/globals.css
-
-// OR if the file is at /styles/globals.css
-import "../styles/globals.css";
+import { Navigation } from "./navigation";
+import { Banner } from "./banner";
 
 export default function ClientLayout({
   children,
@@ -19,7 +15,8 @@ export default function ClientLayout({
   
   return (
     <>
-      <Navigation /> {/* This ensures navigation appears on all pages */}
+      <Banner />
+      <Navigation />
       {children}
       <CartDrawer
         isOpen={isCartOpen}
