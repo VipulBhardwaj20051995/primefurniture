@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Badge } from "@heroui/badge";
 import { Button } from "@heroui/button";
 import { Select, SelectItem } from "@heroui/select";
@@ -9,7 +9,7 @@ import { Product, ProductCard } from "@/components/product-card";
 import { CartDrawer } from "@/components/cart-drawer";
 import { useCartStore } from "@/store/cart";
 import { useSearchParams } from "next/navigation";
-
+import dynamic from "next/dynamic";
 // Sample product data (move this to a dedicated file later)
 const products: Product[] = [
   {
