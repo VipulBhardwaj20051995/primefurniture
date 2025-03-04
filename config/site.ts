@@ -10,7 +10,7 @@ export const siteConfig = {
     },
     {
       label: "Shop",
-      href: "/shop",
+      href: "/shop", // Changed from /app to /shop
     },
     {
       label: "About",
@@ -24,7 +24,7 @@ export const siteConfig = {
   navMenuItems: [
     {
       label: "Shop",
-      href: "/shop",
+      href: "/shop", // Changed from /app to /shop
     },
     {
       label: "About",

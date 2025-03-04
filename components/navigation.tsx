@@ -22,27 +22,31 @@ import {
   DropdownItem
 } from "@heroui/dropdown";
 
-import { useAuthenticator } from '@aws-amplify/ui-react'
 import clsx from "clsx";
 import { siteConfig } from "@/config/site";
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import { Link } from "@heroui/link";
 import { useRouter } from "next/navigation";
-import { FiLogOut, FiSettings, FiShoppingBag, FiUser } from "react-icons/fi";
-
+import { FiLogOut, FiSettings, FiShoppingBag, FiUser, FiShoppingCart } from "react-icons/fi";
+import { useCartStore } from "@/store/cart";
 import Image from "next/image";
-import { FaShoppingCart } from "react-icons/fa";
+import { useState, useEffect } from "react";
 
 export const Navigation = () => {
   const router = useRouter();
-  const { authStatus, user, signOut } = useAuthenticator((context) => [context.authStatus, context.user]);
+  // Replace AWS Amplify authentication with a simple state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  // Use cart store to get cart items and toggle function
+  const { cartItems, toggleCart } = useCartStore();
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  
   return (
     <Navbar maxWidth="xl" position="sticky" isBordered isBlurred={false}>
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
-            {/* <Image src="/brand.svg" alt="logo" width={150} height={50} /> */}
             <span className="text-2xl font-bold">Prime Furniture</span>  
           </NextLink>
         </NavbarBrand>
@@ -69,15 +73,17 @@ export const Navigation = () => {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
+        {/* Shopping Cart */}
         <NavbarItem className="hidden sm:flex gap-2">
-          <Badge color="danger" content="1" shape="circle">
-            <Button isIconOnly  radius="full" variant="light">
-              <FiShoppingBag size={24} />
+          <Badge color="danger" content={totalItems} shape="circle" isInvisible={totalItems === 0}>
+            <Button isIconOnly radius="full" variant="light" onPress={toggleCart}>
+              <FiShoppingCart size={24} />
             </Button>
           </Badge>
         </NavbarItem>
+        
         <NavbarItem className="hidden sm:flex gap-2">
-          {authStatus === "authenticated" ? <Dropdown placement="bottom-start">
+          {isAuthenticated ? <Dropdown placement="bottom-start">
             <DropdownTrigger>
               <Avatar
                 isBordered
@@ -90,7 +96,7 @@ export const Navigation = () => {
             <DropdownMenu aria-label="User Actions" variant="flat">
               <DropdownItem key="user" className="h-14 gap-2">
                 <p className="font-bold">Signed in as</p>
-                <p className="font-bold">Yashdeep Sharma</p>
+                <p className="font-bold">User</p>
               </DropdownItem>
               <DropdownItem key="profile" startContent={<FiUser />}>
                 Profile
@@ -98,7 +104,12 @@ export const Navigation = () => {
               <DropdownItem key="settings" startContent={<FiSettings />}>
                 Settings
               </DropdownItem>
-              <DropdownItem key="logout" color="danger" startContent={<FiLogOut />} onPress={signOut}>
+              <DropdownItem 
+                key="logout" 
+                color="danger" 
+                startContent={<FiLogOut />} 
+                onPress={() => setIsAuthenticated(false)}
+              >
                 Logout
               </DropdownItem>
             </DropdownMenu>
@@ -109,9 +120,16 @@ export const Navigation = () => {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
+        {/* Mobile cart icon */}
+        <Badge color="danger" content={totalItems} shape="circle" isInvisible={totalItems === 0}>
+          <Button isIconOnly radius="full" variant="light" onPress={toggleCart}>
+            <FiShoppingCart size={20} />
+          </Button>
+        </Badge>
         <NavbarMenuToggle />
       </NavbarContent>
       <NavbarMenu>
+        {/* Add cart here as well for mobile */}
         <div className="mx-4 mt-2 flex flex-col gap-2">
           {siteConfig.navMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
@@ -123,7 +141,7 @@ export const Navigation = () => {
                       ? "danger"
                       : "foreground"
                 }
-                href="#"
+                href={item.href}
                 size="lg"
               >
                 {item.label}
@@ -131,16 +149,22 @@ export const Navigation = () => {
             </NavbarMenuItem>
           ))}
           <Divider className="m-3"></Divider>
-          {authStatus !== "authenticated" ?
+          {!isAuthenticated ?
             <NavbarMenuItem key={`signin`}>
               <Button radius="sm" color="primary" onPress={() => router.push("/auth")}>Login</Button>
             </NavbarMenuItem> :
             <NavbarMenuItem key={`signout`}>
-              <Button radius="sm" color="danger" onPress={signOut}>Logout</Button>
+              <Button 
+                radius="sm" 
+                color="danger" 
+                onPress={() => setIsAuthenticated(false)}
+              >
+                Logout
+              </Button>
             </NavbarMenuItem>
           }
         </div>
       </NavbarMenu>
     </Navbar>
-  )
-}
+  );
+};

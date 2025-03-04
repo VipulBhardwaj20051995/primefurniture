@@ -1,6 +1,7 @@
 /** @jsxImportSource react */
 "use client";
 
+import { Banner } from "@/components/banner";
 import { Blank } from "@/components/blank";
 import { Catagories } from "@/components/catagories";
 import { Footer } from "@/components/footer";
@@ -17,7 +18,6 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col">
-      <Header />
       <Hero />
       <Sale />
       <Catagories />

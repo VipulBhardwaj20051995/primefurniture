@@ -1,14 +1,11 @@
-import { Providers } from "./providers";
-import { AmplifyConfig } from "@/components/amplify";
-
+import { Inter } from "next/font/google";
+import "../styles/globals.css"; 
+import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
-import { fontSans } from "@/config/fonts";
-import "@/styles/globals.css";
-import { Metadata, Viewport } from "next";
-import clsx from "clsx";
-import { Navigation } from "@/components/navigation";
+import ClientLayout from "../components/client-layout";
 import { Banner } from "@/components/banner";
 
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
@@ -21,34 +18,16 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
-};
-
-
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html suppressHydrationWarning lang="en">
-      <head />
-      <body className={clsx(
-        "min-h-screen bg-background font-sans antialiased",
-        fontSans.variable,
-      )}>
-        <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
-          <AmplifyConfig />
-          <Banner />
-          <Navigation />
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-10">
-            {children}
-          </div>
-        </Providers>
+    <html lang="en">
+      <body className={inter.className}>
+        <Banner />
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
