@@ -1,45 +1,20 @@
 export type SiteConfig = typeof siteConfig;
 
+// Make sure this file exists and has the correct data
+
 export const siteConfig = {
-  name: "PrimeFurniture",
-  description: "Make beautiful websites regardless of your design experience.",
+  name: "Prime Furniture",
+  description: "Modern furniture for modern homes",
   navItems: [
-    {
-      label: "Home",
-      href: "/",
-    },
-    {
-      label: "Shop",
-      href: "/shop", // Changed from /app to /shop
-    },
-    {
-      label: "About",
-      href: "/about",
-    },
-    {
-      label: "Contact",
-      href: "/contact",
-    },
+    { href: "/", label: "Home" },
+    { href: "/shop", label: "Shop" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" }
   ],
   navMenuItems: [
-    {
-      label: "Shop",
-      href: "/shop", // Changed from /app to /shop
-    },
-    {
-      label: "About",
-      href: "/about",
-    },
-    {
-      label: "Contact",
-      href: "/contact",
-    }
+    { href: "/", label: "Home" },
+    { href: "/shop", label: "Shop" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" }
   ],
-  links: {
-    github: "https://github.com/heroui-inc/heroui",
-    twitter: "https://twitter.com/hero_ui",
-    docs: "https://heroui.com",
-    discord: "https://discord.gg/9b6yyZKmH4",
-    sponsor: "https://patreon.com/jrgarciadev",
-  },
 };

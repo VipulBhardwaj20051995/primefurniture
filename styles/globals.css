@@ -11,3 +11,12 @@ body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
 }
+
+/* Add these styles to your global CSS */
+.navbar-menu {
+  z-index: 50;
+}
+
+.navbar-menu-toggle {
+  z-index: 51;
+}

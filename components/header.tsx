@@ -3,17 +3,13 @@
 import { useRouter } from "next/navigation";
 import Link from 'next/link';
 import Image from 'next/image';
-import { Badge } from "@heroui/badge";
 import { Button } from "@heroui/button";
-import { FiShoppingCart, FiUser, FiMenu, FiX } from "react-icons/fi";
-import { useCartStore } from "@/store/cart";
+import { FiUser, FiMenu, FiX } from "react-icons/fi";
 import { useState } from "react";
 import { siteConfig } from "@/config/site";
 
 export const Header = () => {
   const router = useRouter();
-  const { cartItems, toggleCart } = useCartStore();
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -38,15 +34,8 @@ export const Header = () => {
             ))}
           </nav>
 
-          {/* Cart & Account */}
+          {/* Account & Mobile Menu Toggle only (removed cart) */}
           <div className="flex items-center space-x-4">
-            {/* Cart */}
-            <Badge color="danger" content={totalItems} shape="circle" isInvisible={totalItems === 0}>
-              <Button isIconOnly radius="full" variant="light" onPress={toggleCart}>
-                <FiShoppingCart size={24} />
-              </Button>
-            </Badge>
-
             {/* Account */}
             <Button isIconOnly radius="full" variant="light" onPress={() => router.push("/auth")}>
               <FiUser size={24} />

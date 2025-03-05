@@ -1,8 +1,8 @@
 import { Inter } from "next/font/google";
-import "../styles/globals.css"; 
+import "../styles/globals.css";
 import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
-import { Providers } from "./providers"; // Import your Providers
+import { Providers } from "./providers";
 import ClientLayout from "../components/client-layout";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
           <ClientLayout>{children}</ClientLayout>

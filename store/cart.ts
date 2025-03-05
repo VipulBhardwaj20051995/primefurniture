@@ -21,16 +21,18 @@ interface CartStore {
   removeItem: (id: string) => void;
 }
 
-// Safe localStorage check
-const getDefaultStorage = () => {
-  if (typeof window !== 'undefined') {
-    return createJSONStorage(() => localStorage);
+// Create a safe storage that works in both server and client environments
+const createSafeStorage = () => {
+  if (typeof window === 'undefined') {
+    // Return dummy storage when on server
+    return {
+      getItem: () => JSON.stringify({ cartItems: [], isCartOpen: false }),
+      setItem: () => {},
+      removeItem: () => {},
+    };
   }
-  return createJSONStorage(() => ({
-    getItem: () => null,
-    setItem: () => {},
-    removeItem: () => {}
-  }));
+  // Use local storage on client
+  return localStorage;
 };
 
 export const useCartStore = create<CartStore>()(
@@ -63,8 +65,8 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: 'cart-storage',
-      storage: getDefaultStorage(),
-      skipHydration: true, 
+      storage: createJSONStorage(() => createSafeStorage()),
+      skipHydration: true,
     }
   )
 );

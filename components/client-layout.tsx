@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Navbar,
   NavbarContent,
@@ -214,13 +214,34 @@ export default function ClientLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Add a mounting state to prevent hydration issues
+  const [isClient, setIsClient] = useState(false);
+  
+  // Get cart store
   const { cartItems, isCartOpen, toggleCart, updateQuantity, removeItem } = useCartStore();
+  
+  // Initialize store on client-side only
+  useEffect(() => {
+    setIsClient(true);
+    useCartStore.persist.rehydrate();
+  }, []);
+  
+  // Return a simpler version on server-side to avoid hydration mismatches
+  if (!isClient) {
+    return (
+      <>
+        <Banner />
+        <div className="hidden">Loading...</div>
+        <main>{children}</main>
+      </>
+    );
+  }
   
   return (
     <>
       <Banner />
       <Navigation />
-      {children}
+      <main>{children}</main>
       <CartDrawer
         isOpen={isCartOpen}
         onClose={toggleCart}
