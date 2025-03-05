@@ -1,16 +1,3 @@
-import { Suspense } from "react";
-
-// This is the server component that safely renders the page
-export default function ShopPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen p-8">Loading products...</div>}>
-      <ClientShop />
-    </Suspense>
-  );
-}
-
-// This is moved to a separate client component file
-// filepath: /c:/Users/hp/primefurniture/components/client-shop.tsx
 "use client";
 
 import { useState, useEffect } from "react";

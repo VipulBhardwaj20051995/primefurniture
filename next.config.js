@@ -5,7 +5,7 @@ const nextConfig = {
     unoptimized: true, // For static export
   },
   experimental: {
-    // This helps with some SSR issues on Amplify
+    // This helps with SSR issues on Amplify
     appDocumentPreloading: false,
   },
   // Handle transpilation issues
