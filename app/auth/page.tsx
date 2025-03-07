@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { signInWithRedirect } from '@aws-amplify/auth';
 
 export default function AuthPage() {
   const router = useRouter();
@@ -65,6 +66,14 @@ export default function AuthPage() {
           <div className="flex flex-col gap-4">
             {/* Google Sign-in Button - Enhanced design */}
             <button 
+              onClick={async () => {
+                try {
+                  console.log('Attempting Google sign-in...');
+                  await signInWithRedirect({ provider: 'Google' });
+                } catch (error) {
+                  console.error('Google sign-in error:', error);
+                }
+              }}
               className="flex items-center justify-center gap-3 w-full py-3.5 px-4 
                       bg-white hover:bg-gray-50 text-gray-700 font-medium 
                       rounded-lg border border-gray-300 shadow-sm 

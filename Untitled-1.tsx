@@ -10,7 +10,8 @@ const amplifyConfig = {
       identityPoolId: 'us-east-1:615a7c59-ab21-49a8-9c40-814d647c7e53',
       loginWith: {
         oauth: {
-          domain: 'us-east-1lnizu5hx4.auth.us-east-1.amazoncognito.com', // INCORRECT
+          // CORRECT FORMAT - remove https:// 
+          domain: 'us-east-1lnizu5hx4.auth.us-east-1.amazoncognito.com',
           scopes: ['email', 'profile', 'openid'],
           redirectSignIn: ['https://dev.bedsflooring.com/'],
           redirectSignOut: ['https://dev.bedsflooring.com/'],
