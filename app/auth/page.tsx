@@ -5,24 +5,11 @@ import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { signInWithRedirect } from '@aws-amplify/auth';
-import AmplifyConfig from '../auth/amplify-config';
+// Import but don't use in page component
+import '../auth/amplify-config';
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <html lang="en">
-      <body>
-        <AmplifyConfig />
-        {children}
-      </body>
-    </html>
-  );
-}
-
-export function AuthPage() {
+// CHANGE THIS: Use default export instead of named export
+export default function Page() {  // Renamed to match Next.js naming convention
   const router = useRouter();
   const { authStatus } = useAuthenticator((context) => [context.authStatus]);
   const [isLoading, setIsLoading] = useState(true);
