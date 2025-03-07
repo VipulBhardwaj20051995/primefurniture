@@ -1,15 +1,15 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthenticator } from '@aws-amplify/ui-react';
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import { signInWithRedirect } from '@aws-amplify/auth';
-// Import but don't use in page component
-import '../auth/amplify-config';
 
-// CHANGE THIS: Use default export instead of named export
-export default function Page() {  // Renamed to match Next.js naming convention
+// Fix the import path - it's in the same directory
+import './amplify-config';
+
+export default function Page() {
   const router = useRouter();
   const { authStatus } = useAuthenticator((context) => [context.authStatus]);
   const [isLoading, setIsLoading] = useState(true);
