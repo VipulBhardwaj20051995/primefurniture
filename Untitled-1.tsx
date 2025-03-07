@@ -10,7 +10,7 @@ const amplifyConfig = {
       identityPoolId: 'us-east-1:615a7c59-ab21-49a8-9c40-814d647c7e53',
       loginWith: {
         oauth: {
-          domain: 'us-east-1lnizu5hx4.auth.us-east-1.amazoncognito.com', // Removed https://
+          domain: 'us-east-1lnizu5hx4.auth.us-east-1.amazoncognito.com', // INCORRECT
           scopes: ['email', 'profile', 'openid'],
           redirectSignIn: ['https://dev.bedsflooring.com/'],
           redirectSignOut: ['https://dev.bedsflooring.com/'],
@@ -28,10 +28,11 @@ export const configureAmplify = () => {
 // Initialize Amplify
 configureAmplify();
 
-function GoogleSignIn() {
+function GoogleSignInButton() {
   const handleGoogleSignIn = async () => {
+    console.log('Google sign-in clicked');
     try {
-      // Using Gen 2 method for authentication
+      console.log('Attempting to redirect to Google...');
       await signInWithRedirect({ provider: 'Google' });
     } catch (error) {
       console.error('Error signing in with Google:', error);
@@ -45,4 +46,16 @@ function GoogleSignIn() {
   );
 }
 
-export default GoogleSignIn;
+export { GoogleSignInButton as GoogleSignInButtonComponent };
+
+// In your actual auth page file
+import { GoogleSignInButtonComponent } from './Untitled-1';
+
+export default function AuthPage() {
+  return (
+    <div>
+      <h2>Sign in</h2>
+      <GoogleSignInButtonComponent />
+    </div>
+  );
+}
