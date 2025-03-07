@@ -1,13 +1,28 @@
 "use client";
 
-import { AuthWrapper } from "@/components/auth-wrapper";
 import { useRouter } from "next/navigation";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { signInWithRedirect } from '@aws-amplify/auth';
+import AmplifyConfig from '../auth/amplify-config';
 
-export default function AuthPage() {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <AmplifyConfig />
+        {children}
+      </body>
+    </html>
+  );
+}
+
+export function AuthPage() {
   const router = useRouter();
   const { authStatus } = useAuthenticator((context) => [context.authStatus]);
   const [isLoading, setIsLoading] = useState(true);
