@@ -13,10 +13,9 @@ const schema = a.schema({
       userId: a.string().required(),
       createdAt: a.datetime(),
     })
-    // Fix: Use the correct authorization syntax for Gen 2
     .authorization((allow) => [
-      // Allow anyone to create accounts
-      allow.unAuthenticated().to(['create']),
+      // FIXED: Changed unAuthenticated() to public() to avoid API key requirement
+      allow.public().to(['create']),
       // Allow authenticated users to read account details
       allow.authenticated().to(['read']),
       // Allow owners of their own data
