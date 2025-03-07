@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import Image from "next/image";
 import { signInWithRedirect } from '@aws-amplify/auth';
+import Link from "next/link";
 
 // Fix the import path - it's in the same directory
 import './amplify-config';
@@ -161,9 +162,9 @@ export default function Page() {
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Don't have an account?{' '}
-                <a href="/auth/signup" className="text-primary hover:underline font-medium">
+                <Link href="/auth/signup" className="text-primary hover:underline font-medium">
                   Create an account
-                </a>
+                </Link>
               </p>
             </div>
           </div>

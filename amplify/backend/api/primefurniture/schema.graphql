@@ -1,0 +1,11 @@
+type AccountDetail @model @auth(rules: [{ allow: public }]) {
+  id: ID!
+  userId: ID!
+  name: String!
+  email: String!
+  address: String!
+  city: String!
+  state: String!
+  zipCode: String!
+  createdAt: AWSDateTime
+}
