@@ -14,7 +14,7 @@ export default function VerifyPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -30,7 +30,7 @@ export default function VerifyPage() {
       router.push("/auth?verified=true");
     } catch (error) {
       console.error("Verification error:", error);
-      setError(error.message || "Failed to verify account. Please try again.");
+      setError((error as Error).message || "Failed to verify account. Please try again.");
     } finally {
       setLoading(false);
     }

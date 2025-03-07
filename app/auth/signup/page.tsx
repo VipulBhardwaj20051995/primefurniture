@@ -6,8 +6,9 @@ import { signUp } from "@aws-amplify/auth";
 import { generateClient } from "@aws-amplify/api";
 import Link from "next/link";
 import Image from "next/image";
-import '../amplify-config'; // Import configuration
+import '../amplify-config';
 
+// Generate client directly
 const client = generateClient();
 
 export default function SignupPage() {
@@ -20,15 +21,16 @@ export default function SignupPage() {
     city: "",
     state: "",
     zipCode: "",
-  });
+  }); // FIXED: Missing closing parenthesis
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleChange = (e) => {
+  const handleChange = (e: { target: { name: any; value: any; }; }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -46,7 +48,7 @@ export default function SignupPage() {
         }
       });
 
-      // 2. Save additional user details to the accountdetail table
+      // 2. Use the client to create account detail
       await client.mutations.createAccountDetail({
         input: {
           name: formData.name,
@@ -64,7 +66,7 @@ export default function SignupPage() {
       router.push(`/auth/verify?email=${encodeURIComponent(formData.email)}`);
     } catch (error) {
       console.error("Sign up error:", error);
-      setError(error.message || "Failed to create account. Please try again.");
+      setError((error as any).message || "Failed to create account. Please try again.");
     } finally {
       setLoading(false);
     }

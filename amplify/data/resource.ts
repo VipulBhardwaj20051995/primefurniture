@@ -17,13 +17,11 @@ const schema = a.schema({
       name: a.string().required(),
       email: a.string().required(),
       address: a.string().required(),
-      city: a.string().required(),
-      state: a.string().required(),
-      zipCode: a.string().required(),
-      userId: a.string().required(),
-      createdAt: a.datetime(),
     })
-    .authorization(allow => allow.public().to(['create', 'read'])),
+    .authorization((allow) => [
+      allow.authenticated().to(['read']),
+      allow.authenticated().to(['create']),
+    ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -31,10 +29,7 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "apiKey",
-    apiKeyAuthorizationMode: {
-      expiresInDays: 30,
-    },
+    defaultAuthorizationMode: 'userPool',
   },
 });
 
