@@ -37,7 +37,7 @@ export default function SignupPage() {
     setError("");
 
     try {
-      // 1. Create Cognito user
+      // 1. Create Cognituser
       const { isSignUpComplete, userId, nextStep } = await signUp({
         username: formData.email,
         password: formData.password,
