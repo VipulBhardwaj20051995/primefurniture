@@ -52,20 +52,26 @@ export default function SignupPage() {
       // 2. Use the client to create account detail
       if (ACCOUNT_DETAILS_ENABLED) {
         try {
-          await client.mutations.createAccountDetail({
-            input: {
-              name: formData.name,
-              email: formData.email,
-              address: formData.address,
-              city: formData.city,
-              state: formData.state,
-              zipCode: formData.zipCode,
-              userId: userId || formData.email,
-              createdAt: new Date().toISOString()
-            }
-          });
+          // Check if the mutation exists before calling it
+          if (typeof (client.mutations as any).createAccountDetail === 'function') {
+            await (client.mutations as any).createAccountDetail({
+              input: {
+                name: formData.name,
+                email: formData.email,
+                address: formData.address,
+                city: formData.city,
+                state: formData.state,
+                zipCode: formData.zipCode,
+                userId: userId || formData.email,
+                createdAt: new Date().toISOString()
+              }
+            });
+          } else {
+            console.warn("createAccountDetail mutation not yet available - backend might still be deploying");
+          }
         } catch (error) {
           console.error("Failed to save account details:", error);
+          // Don't block the signup process if this fails
         }
       }
 
