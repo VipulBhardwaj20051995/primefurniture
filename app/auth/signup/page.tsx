@@ -10,6 +10,7 @@ import '../amplify-config';
 
 // Generate client directly
 const client = generateClient();
+const ACCOUNT_DETAILS_ENABLED = true; // Set to false if deploying before backend is ready
 
 export default function SignupPage() {
   const router = useRouter();
@@ -49,18 +50,24 @@ export default function SignupPage() {
       });
 
       // 2. Use the client to create account detail
-      await client.mutations.createAccountDetail({
-        input: {
-          name: formData.name,
-          email: formData.email,
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          zipCode: formData.zipCode,
-          userId: userId || formData.email,
-          createdAt: new Date().toISOString()
+      if (ACCOUNT_DETAILS_ENABLED) {
+        try {
+          await client.mutations.createAccountDetail({
+            input: {
+              name: formData.name,
+              email: formData.email,
+              address: formData.address,
+              city: formData.city,
+              state: formData.state,
+              zipCode: formData.zipCode,
+              userId: userId || formData.email,
+              createdAt: new Date().toISOString()
+            }
+          });
+        } catch (error) {
+          console.error("Failed to save account details:", error);
         }
-      });
+      }
 
       // 3. Redirect to verification page or appropriate next step
       router.push(`/auth/verify?email=${encodeURIComponent(formData.email)}`);
