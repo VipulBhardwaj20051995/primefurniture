@@ -4,12 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signUp } from "@aws-amplify/auth";
 import { generateClient } from "@aws-amplify/api";
-import { Schema } from "../../../amplify/data/resource";
 import Link from "next/link";
 import Image from "next/image";
 import '../amplify-config'; // Import configuration
 
-const client = generateClient<Schema>();
+const client = generateClient();
 
 export default function SignupPage() {
   const router = useRouter();
@@ -48,15 +47,17 @@ export default function SignupPage() {
       });
 
       // 2. Save additional user details to the accountdetail table
-      await client.models.AccountDetail.create({
-        name: formData.name,
-        email: formData.email,
-        address: formData.address,
-        city: formData.city,
-        state: formData.state,
-        zipCode: formData.zipCode,
-        userId: userId || formData.email,
-        createdAt: new Date().toISOString()
+      await client.mutations.createAccountDetail({
+        input: {
+          name: formData.name,
+          email: formData.email,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          zipCode: formData.zipCode,
+          userId: userId || formData.email,
+          createdAt: new Date().toISOString()
+        }
       });
 
       // 3. Redirect to verification page or appropriate next step
