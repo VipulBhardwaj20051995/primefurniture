@@ -12,8 +12,8 @@ import {
   useAuthenticator,
   components,
 } from "@aws-amplify/ui-react";
-import { Link } from "@heroui/link";
-import { I18n } from 'aws-amplify/utils';
+import Link from "next/link";
+import { I18n } from 'aws-amplify';
 import { translations } from '@aws-amplify/ui-react';
 
 export const AuthWrapper = ({ children }: React.PropsWithChildren) => {

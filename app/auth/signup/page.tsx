@@ -6,7 +6,9 @@ import { signUp } from "@aws-amplify/auth";
 import { generateClient } from "@aws-amplify/api";
 import Link from "next/link";
 import Image from "next/image";
-import '../amplify-config';
+import "@aws-amplify/ui-react/styles.css";
+// Import config from your configuration file
+import '../amplify-config';  // This file should configure Amplify globally
 
 // Generate client directly
 const client = generateClient();
