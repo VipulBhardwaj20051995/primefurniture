@@ -54,6 +54,7 @@ export default function SignupPage() {
         try {
           // Check if the mutation exists before calling it
           if (typeof (client.mutations as any).createAccountDetail === 'function') {
+            // Only call if the function exists
             await (client.mutations as any).createAccountDetail({
               input: {
                 name: formData.name,
