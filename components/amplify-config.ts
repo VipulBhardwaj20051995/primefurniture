@@ -1,7 +1,7 @@
 "use client";
 
 import { Amplify } from 'aws-amplify';
-import '../components/amplify-config'; // From pages directory
+import '../amplify-config'; // From pages directory
 
 // Try to use amplify_outputs.json if it exists, otherwise use environment variables
 let config;
