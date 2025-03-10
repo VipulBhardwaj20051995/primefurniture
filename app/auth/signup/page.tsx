@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import '../../lib/amplify-config';
+import '../lib/amplify-config';
 import { signUp } from "@aws-amplify/auth";
 import { generateClient } from "@aws-amplify/api";
 import Link from "next/link";

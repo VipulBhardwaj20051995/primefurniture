@@ -4,9 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { confirmSignUp } from "@aws-amplify/auth";
 import Link from "next/link";
-import '../../lib/amplify-config';
-import '../amplify-config'; // Import configuration
-
+import '../lib/amplify-config';
 export default function VerifyPage() {
   const router = useRouter();
   const searchParams = useSearchParams();

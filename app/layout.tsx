@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
 import { Metadata } from "next";
-import '../lib/amplify-config';
+import './auth/amplify-config';
 import { siteConfig } from "@/config/site";
 import { Providers } from "./providers";
 import ClientLayout from "../components/client-layout";
