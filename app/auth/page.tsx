@@ -1,15 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import '../lib/amplify-config';
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthenticator } from '@aws-amplify/ui-react';
-import Image from "next/image";
-import { signInWithRedirect } from '@aws-amplify/auth';
+import { signUp, signIn } from "@aws-amplify/auth";
+import { generateClient } from "@aws-amplify/api";
 import Link from "next/link";
+import Image from "next/image";
+import { Amplify } from 'aws-amplify';
 
-// Fix the import path - it's in the same directory
-import './amplify-config';
+// Configure Amplify DIRECTLY in this file - no imports
+Amplify.configure({
+  Auth: {
+    region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+    userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID,
+    userPoolWebClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID,
+  },
+  API: {
+    GraphQL: {
+      endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT,
+      region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+    },
+  },
+});
+
+const client = generateClient();
+const ACCOUNT_DETAILS_ENABLED = true;
 
 export default function Page() {
   const router = useRouter();

@@ -4,7 +4,25 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { confirmSignUp } from "@aws-amplify/auth";
 import Link from "next/link";
+import Image from "next/image";
+import { Amplify } from 'aws-amplify';
 import '../lib/amplify-config';
+
+// Configure Amplify DIRECTLY in this file - no imports
+Amplify.configure({
+  Auth: {
+    region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+    userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID,
+    userPoolWebClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID,
+  },
+  API: {
+    GraphQL: {
+      endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT,
+      region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+    },
+  },
+});
+
 export default function VerifyPage() {
   const router = useRouter();
   const searchParams = useSearchParams();

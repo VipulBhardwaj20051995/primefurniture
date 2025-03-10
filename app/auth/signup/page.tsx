@@ -1,19 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import '../lib/amplify-config';
-import { signUp } from "@aws-amplify/auth";
+import { signUp, signIn } from "@aws-amplify/auth";
 import { generateClient } from "@aws-amplify/api";
 import Link from "next/link";
 import Image from "next/image";
-import "@aws-amplify/ui-react/styles.css";
-// Import config from your configuration file
-import '../amplify-config';  // This file should configure Amplify globally
+import { Amplify } from 'aws-amplify';
 
-// Generate client directly
+// Configure Amplify DIRECTLY in this file - no imports
+Amplify.configure({
+  Auth: {
+    region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+    userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID,
+    userPoolWebClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID,
+  },
+  API: {
+    GraphQL: {
+      endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT,
+      region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+    },
+  },
+});
+
 const client = generateClient();
-const ACCOUNT_DETAILS_ENABLED = true; // Set to false if deploying before backend is ready
+const ACCOUNT_DETAILS_ENABLED = true;
 
 export default function SignupPage() {
   const router = useRouter();
