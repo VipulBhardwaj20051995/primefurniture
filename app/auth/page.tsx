@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import '../../lib/amplify-config';
 import { useRouter } from "next/navigation";
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import Image from "next/image";
@@ -8,7 +9,7 @@ import { signInWithRedirect } from '@aws-amplify/auth';
 import Link from "next/link";
 
 // Fix the import path - it's in the same directory
-import './amplify-config';
+import '../amplify-config';
 
 export default function Page() {
   const router = useRouter();
