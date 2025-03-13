@@ -28,6 +28,21 @@ const config = {
 };
 
 // Type assertion to satisfy TypeScript
-Amplify.configure(config as any);
+Amplify.configure({
+  // Type assertion just for the Auth part
+  Auth: {
+    region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+    userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
+    userPoolWebClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
+    // Other auth properties
+  } as any,
+  API: {
+    GraphQL: {
+      endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
+      region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+      defaultAuthMode: "userPool"
+    },
+  },
+});
 
 export default config;
