@@ -8,20 +8,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { Amplify } from 'aws-amplify';
 
-// INLINE CONFIGURATION - remove any import to amplify-config
+// INLINE CONFIGURATION with type assertion
 Amplify.configure({
   Auth: {
     region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
     userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
-    userPoolWebClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
-  },
+    userPoolWebClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || ''
+  } as any, // Add this type assertion to fix the error
   API: {
     GraphQL: {
       endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
       region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
       defaultAuthMode: "userPool" // Use Cognito user pool authentication
-    },
-  },
+    }
+  }
 });
 
 // Generate client after configuration
