@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { confirmSignUp } from "@aws-amplify/auth";
 import Link from "next/link";
 import Image from "next/image";
+import '../lib/amplify-config';
 import { Amplify } from 'aws-amplify';
 import '../lib/amplify-config';
 

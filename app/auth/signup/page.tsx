@@ -6,6 +6,7 @@ import { signUp, signIn } from "@aws-amplify/auth";
 import { generateClient } from "@aws-amplify/api";
 import Link from "next/link";
 import Image from "next/image";
+import '../lib/amplify-config';
 import { Amplify } from 'aws-amplify';
 
 // Configure Amplify DIRECTLY in this file - no imports

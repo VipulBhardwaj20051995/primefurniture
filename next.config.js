@@ -9,7 +9,7 @@ const nextConfig = {
     appDocumentPreloading: false,
   },
   // Handle transpilation issues
-  transpilePackages: ['@heroui'],
+  transpilePackages: ['lib'],
 };
 
 module.exports = nextConfig;

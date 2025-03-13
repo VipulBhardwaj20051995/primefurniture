@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signUp, signIn } from "@aws-amplify/auth";
 import { generateClient } from "@aws-amplify/api";
+import '../lib/amplify-config';
 import Link from "next/link";
 import Image from "next/image";
 import { Amplify } from 'aws-amplify';
