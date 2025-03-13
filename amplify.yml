@@ -3,16 +3,30 @@ backend:
   phases:
     build:
       commands:
+        # Add npm retry configuration
         - nvm install 18.19.0
         - nvm use 18.19.0
-        - npm ci
+        - npm config set fetch-retries 5
+        - npm config set fetch-retry-mintimeout 20000
+        - npm config set fetch-retry-maxtimeout 120000
+        # Use multiple attempts with || operator (try 3 times)
+        - npm ci || npm ci || npm ci
+        # Your other backend commands here
+        - echo "NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL" >> .env
+        - echo "NEXT_PUBLIC_STRIPE_PUBLIC_KEY=$NEXT_PUBLIC_STRIPE_PUBLIC_KEY" >> .env
+
 frontend:
   phases:
     preBuild:
       commands:
+        # Add the same npm retry configuration to frontend phase
         - nvm install 18.19.0
         - nvm use 18.19.0
-        - npm install
+        - npm config set fetch-retries 5
+        - npm config set fetch-retry-mintimeout 20000
+        - npm config set fetch-retry-maxtimeout 120000
+        # Use more resilient install
+        - npm ci || npm ci || npm install --no-fund --no-audit
     build:
       commands:
         - npm run build

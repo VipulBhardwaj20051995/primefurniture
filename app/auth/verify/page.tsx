@@ -18,6 +18,7 @@ Amplify.configure({
     GraphQL: {
       endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
       region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+      defaultAuthMode: "userPool" // Use Cognito user pool authentication
     },
   },
 });
