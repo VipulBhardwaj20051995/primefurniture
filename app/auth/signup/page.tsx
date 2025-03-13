@@ -1,29 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signUp, signIn } from "@aws-amplify/auth";
+import { signUp } from "@aws-amplify/auth";
 import { generateClient } from "@aws-amplify/api";
 import Link from "next/link";
 import Image from "next/image";
-import '../lib/amplify-config';
 import { Amplify } from 'aws-amplify';
 
-// Configure Amplify DIRECTLY in this file - no imports
+// INLINE CONFIGURATION - remove any import to amplify-config
 Amplify.configure({
   Auth: {
     region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
-    userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID,
-    userPoolWebClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID,
+    userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
+    userPoolWebClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
   },
   API: {
     GraphQL: {
-      endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT,
+      endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
       region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
     },
   },
 });
 
+// Generate client after configuration
 const client = generateClient();
 const ACCOUNT_DETAILS_ENABLED = true;
 

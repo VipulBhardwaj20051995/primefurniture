@@ -2,23 +2,21 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { confirmSignUp } from "@aws-amplify/auth";
+import { confirmSignUp, autoSignIn } from "@aws-amplify/auth";
 import Link from "next/link";
 import Image from "next/image";
-import '../lib/amplify-config';
 import { Amplify } from 'aws-amplify';
-import '../lib/amplify-config';
 
-// Configure Amplify DIRECTLY in this file - no imports
+// INLINE CONFIGURATION - remove any import to amplify-config
 Amplify.configure({
   Auth: {
     region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
-    userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID,
-    userPoolWebClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID,
+    userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
+    userPoolWebClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
   },
   API: {
     GraphQL: {
-      endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT,
+      endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
       region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
     },
   },
