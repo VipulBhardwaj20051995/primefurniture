@@ -7,28 +7,30 @@ import Link from "next/link";
 import Image from "next/image";
 import { Amplify } from 'aws-amplify';
 
-// INLINE CONFIGURATION with type assertion
+// CORRECT CONFIGURATION - No duplicate Auth properties
 Amplify.configure({
   Auth: {
-    region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
-    userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
-    userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
-    oauth: {
-      domain: process.env.NEXT_PUBLIC_AUTH_DOMAIN || '',
-      scope: ['email', 'profile', 'openid'],
-      redirectSignIn: process.env.NEXT_PUBLIC_REDIRECT_SIGN_IN || '',
-      redirectSignOut: process.env.NEXT_PUBLIC_REDIRECT_SIGN_OUT || '',
-      responseType: 'code',
-    },
-  } as any, // Add this type assertion to fix the error
+    // Use the new Cognito structure
+    Cognito: {
+      userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
+      userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
+      loginWith: {
+        email: true,
+        phone: false,
+        username: false
+      }
+    }
+  },
+  // Move region outside of Auth
+  region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
   API: {
     GraphQL: {
       endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
       region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
-      defaultAuthMode: "userPool" // Use Cognito user pool authentication
-    },
-  },
-});
+      defaultAuthMode: "userPool"
+    }
+  }
+} as any); // Type assertion for the whole object
 
 export default function VerifyPage() {
   const router = useRouter();
