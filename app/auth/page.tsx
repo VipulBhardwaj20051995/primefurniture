@@ -23,6 +23,27 @@ Amplify.configure({
       defaultAuthMode: "userPool" // Use Cognito user pool authentication
     },
   },
+  Auth: {
+    region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+    userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
+    userPoolWebClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
+    Cognito: {
+      userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
+      userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
+      loginWith: {
+        email: true,
+        phone: false,
+        username: false,
+        oauth: {
+          domain: process.env.NEXT_PUBLIC_AUTH_DOMAIN || '',
+          scopes: ['email', 'profile', 'openid'],
+          redirectSignIn: [process.env.NEXT_PUBLIC_REDIRECT_SIGN_IN || ''],
+          redirectSignOut: [process.env.NEXT_PUBLIC_REDIRECT_SIGN_OUT || ''],
+          responseType: 'code'
+        }
+      }
+    }
+  } as any,
 });
 
 const client = generateClient();
