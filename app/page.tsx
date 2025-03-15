@@ -22,6 +22,7 @@ export default function HomePage() {
       <Catagories />
       <Hero2 />
       <Hero3 />
+      <Hero3 />
       <Hero4 />
       <Blank />
       <Footer />
