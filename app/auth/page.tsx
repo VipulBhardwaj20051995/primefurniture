@@ -1,12 +1,11 @@
-// Add this near the top of your file
+"use client"; // MUST BE THE FIRST LINE (except comments)
+
+// Then add dynamic export 
 export const dynamic = 'force-dynamic';
 
-"use client";
-
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { signUp, signIn, signInWithRedirect } from "@aws-amplify/auth";
-import { generateClient } from "@aws-amplify/api";
+import { useRouter, useSearchParams } from "next/navigation";
+import { confirmSignUp, autoSignIn } from "@aws-amplify/auth";
 import Link from "next/link";
 import Image from "next/image";
 import { Amplify } from 'aws-amplify';

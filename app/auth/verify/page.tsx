@@ -1,7 +1,8 @@
 // Add this near the top of your file
-export const dynamic = 'force-dynamic';
+"use client"; // MUST BE THE FIRST LINE (except comments)
 
-"use client";
+// Then add dynamic export 
+export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";

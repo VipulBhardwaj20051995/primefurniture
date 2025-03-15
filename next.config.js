@@ -4,6 +4,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Add this experimental flag to help with client components
+  experimental: {
+    serverComponentsExternalPackages: ['@aws-amplify/auth', 'aws-amplify'],
+  }
 };
 
 module.exports = nextConfig;
