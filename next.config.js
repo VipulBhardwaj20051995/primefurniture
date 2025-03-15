@@ -1,15 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  output: 'standalone', // More compatible with AWS Amplify hosting
   images: {
-    unoptimized: true, // For static export
+    unoptimized: true,
   },
-  experimental: {
-    // This helps with SSR issues on Amplify
-    appDocumentPreloading: false,
-  },
-  // Handle transpilation issues
-  transpilePackages: ['lib'],
 };
 
 module.exports = nextConfig;

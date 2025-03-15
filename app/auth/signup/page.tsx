@@ -1,3 +1,6 @@
+// Add this near the top of your file
+export const dynamic = 'force-dynamic';
+
 "use client";
 
 import { useState } from "react";
