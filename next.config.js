@@ -4,9 +4,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Add this experimental flag to help with client components
+  // Fix the property name as mentioned in the warning
   experimental: {
-    serverComponentsExternalPackages: ['@aws-amplify/auth', 'aws-amplify'],
+    // OLD: serverComponentsExternalPackages: ['@aws-amplify/auth', 'aws-amplify'],
+    serverExternalPackages: ['@aws-amplify/auth', 'aws-amplify'],
   }
 };
 
