@@ -8,9 +8,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { configureAmplify } from "../../../lib/safe-client";
 
-// Skip static generation entirely
-export const generateStaticParams = () => [];
-
 export default function VerifyPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
