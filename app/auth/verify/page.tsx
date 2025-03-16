@@ -33,7 +33,6 @@ export default function VerifyPage() {
           }
         }
       },
-      region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
       API: {
         GraphQL: {
           endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
@@ -41,7 +40,7 @@ export default function VerifyPage() {
           defaultAuthMode: "userPool"
         }
       }
-    });
+    } as any);
   }, []);
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {

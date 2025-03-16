@@ -17,7 +17,7 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [client, setClient] = useState(null);
+  const [client, setClient] = useState<any>(null);
 
   // Configure Amplify only in useEffect
   useEffect(() => {
@@ -33,7 +33,6 @@ export default function SignupPage() {
           }
         }
       },
-      region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
       API: {
         GraphQL: {
           endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
@@ -41,7 +40,8 @@ export default function SignupPage() {
           defaultAuthMode: "userPool"
         }
       }
-    });
+    } as any);
+    
     // Create client inside useEffect
     setClient(generateClient());
   }, []);

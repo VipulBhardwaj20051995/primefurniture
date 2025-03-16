@@ -3,30 +3,22 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { confirmSignUp, autoSignIn, signIn, signInWithRedirect } from "@aws-amplify/auth";
+import { useRouter } from "next/navigation";
+import { signIn, signInWithRedirect } from "@aws-amplify/auth";
 import { generateClient } from "@aws-amplify/api";
 import Link from "next/link";
 import Image from "next/image";
 import { Amplify } from 'aws-amplify';
-import { useAuthenticator } from "@aws-amplify/ui-react";
 
 export default function Page() {
   const router = useRouter();
-  const { authStatus } = useAuthenticator((context) => [context.authStatus]);
-  const [isLoading, setIsLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [client, setClient] = useState(null);
-  
-  useEffect(() => {
-    if (authStatus === "authenticated") {
-      router.push("/");
-    } else if (authStatus === "unauthenticated") {
-      setIsLoading(false);
-    }
-  }, [authStatus, router]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [client, setClient] = useState<any>(null);
 
+  // Configure Amplify only in useEffect
   useEffect(() => {
     Amplify.configure({
       Auth: {
@@ -36,11 +28,17 @@ export default function Page() {
           loginWith: {
             email: true,
             phone: false,
-            username: false
+            username: false,
+            oauth: {
+              domain: process.env.NEXT_PUBLIC_AUTH_DOMAIN || '',
+              scopes: ['email', 'profile', 'openid'],
+              redirectSignIn: [process.env.NEXT_PUBLIC_REDIRECT_SIGN_IN || ''],
+              redirectSignOut: [process.env.NEXT_PUBLIC_REDIRECT_SIGN_OUT || ''],
+              responseType: 'code'
+            }
           }
         }
       },
-      region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
       API: {
         GraphQL: {
           endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
@@ -48,11 +46,35 @@ export default function Page() {
           defaultAuthMode: "userPool"
         }
       }
-    });
+    } as any);
+    
+    // Create client inside useEffect
     setClient(generateClient());
   }, []);
-  
-  if (isLoading) {
+
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    
+    try {
+      const { isSignedIn, nextStep } = await signIn({
+        username: email,
+        password: password,
+      });
+      
+      if (isSignedIn) {
+        router.push("/profile"); // Or wherever you want to redirect after login
+      }
+    } catch (error) {
+      console.error("Sign in error:", error);
+      setError((error as any).message || "Failed to sign in. Please check your credentials.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-neutral-50 to-neutral-100">
         <div className="animate-pulse flex flex-col items-center">
@@ -135,7 +157,7 @@ export default function Page() {
             </div>
             
             {/* Custom styled form - Replace or wrap AuthWrapper content */}
-            <div className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-5">
               {/* Username/Email field */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -188,7 +210,7 @@ export default function Page() {
               >
                 Sign in
               </button>
-            </div>
+            </form>
             
             {/* Sign up option */}
             <div className="mt-6 text-center">
