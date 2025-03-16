@@ -4,10 +4,7 @@ const nextConfig = {
   images: {
     unoptimized: true, // Required for static deployment
   },
-  experimental: {
-    serverExternalPackages: ['@aws-amplify/auth', 'aws-amplify'], // Correct property name
-  },
-  // Add this to prevent static optimization failing
+  // No experimental settings - they caused errors
   staticPageGenerationTimeout: 1, // 1 second timeout for static generation
 };
 
