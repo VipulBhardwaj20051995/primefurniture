@@ -1,15 +1,15 @@
-// Add this near the top of your file
 "use client"; // MUST BE THE FIRST LINE (except comments)
-
-// Then add dynamic export 
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { confirmSignUp, autoSignIn } from "@aws-amplify/auth";
+import { confirmSignUp } from "@aws-amplify/auth";
 import Link from "next/link";
 import Image from "next/image";
-import { Amplify } from 'aws-amplify';
+import { configureAmplify } from "../../../lib/safe-client";
+
+// Skip static generation entirely
+export const generateStaticParams = () => [];
 
 export default function VerifyPage() {
   const router = useRouter();
@@ -18,29 +18,12 @@ export default function VerifyPage() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isConfigured, setIsConfigured] = useState(false);
 
-  // Configure Amplify only in useEffect
   useEffect(() => {
-    Amplify.configure({
-      Auth: {
-        Cognito: {
-          userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
-          userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
-          loginWith: {
-            email: true,
-            phone: false,
-            username: false
-          }
-        }
-      },
-      API: {
-        GraphQL: {
-          endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
-          region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
-          defaultAuthMode: "userPool"
-        }
-      }
-    } as any);
+    // Safely configure Amplify
+    const configured = configureAmplify();
+    setIsConfigured(configured);
   }, []);
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {

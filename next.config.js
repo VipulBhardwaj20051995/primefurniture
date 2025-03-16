@@ -6,7 +6,9 @@ const nextConfig = {
   },
   experimental: {
     serverExternalPackages: ['@aws-amplify/auth', 'aws-amplify'], // Correct property name
-  }
+  },
+  // Add this to prevent static optimization failing
+  staticPageGenerationTimeout: 1, // 1 second timeout for static generation
 };
 
-module.exports = nextConfig; // Note: There's a typo in your code (nextConf)
+module.exports = nextConfig;
