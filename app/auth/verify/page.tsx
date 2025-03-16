@@ -11,31 +11,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Amplify } from 'aws-amplify';
 
-// CORRECT CONFIGURATION - No duplicate Auth properties
-Amplify.configure({
-  Auth: {
-    // Use the new Cognito structure
-    Cognito: {
-      userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
-      userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
-      loginWith: {
-        email: true,
-        phone: false,
-        username: false
-      }
-    }
-  },
-  // Move region outside of Auth
-  region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
-  API: {
-    GraphQL: {
-      endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
-      region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
-      defaultAuthMode: "userPool"
-    }
-  }
-} as any); // Type assertion for the whole object
-
 export default function VerifyPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -43,6 +18,31 @@ export default function VerifyPage() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Configure Amplify only in useEffect
+  useEffect(() => {
+    Amplify.configure({
+      Auth: {
+        Cognito: {
+          userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
+          userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
+          loginWith: {
+            email: true,
+            phone: false,
+            username: false
+          }
+        }
+      },
+      region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+      API: {
+        GraphQL: {
+          endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
+          region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+          defaultAuthMode: "userPool"
+        }
+      }
+    });
+  }, []);
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();

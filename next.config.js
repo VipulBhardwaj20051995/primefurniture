@@ -1,14 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone', // More compatible with AWS Amplify hosting
+  output: 'standalone', // Required for Amplify
   images: {
-    unoptimized: true,
+    unoptimized: true, // Required for static deployment
   },
-  // Fix the property name as mentioned in the warning
   experimental: {
-    // OLD: serverComponentsExternalPackages: ['@aws-amplify/auth', 'aws-amplify'],
-    serverExternalPackages: ['@aws-amplify/auth', 'aws-amplify'],
+    serverExternalPackages: ['@aws-amplify/auth', 'aws-amplify'], // Correct property name
   }
 };
 
-module.exports = nextConfig;
+module.exports = nextConfig; // Note: There's a typo in your code (nextConf)

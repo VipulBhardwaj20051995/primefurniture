@@ -1,54 +1,56 @@
-// Add this near the top of your file
 "use client"; // MUST BE THE FIRST LINE (except comments)
 
-// Then add dynamic export 
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { signUp } from "@aws-amplify/auth";
-import { generateClient } from "@aws-amplify/api"; // Add this import!
+import { generateClient } from "@aws-amplify/api";
 import Link from "next/link";
 import Image from "next/image";
 import { Amplify } from 'aws-amplify';
 
-// INLINE CONFIGURATION with type assertion
-Amplify.configure({
-  Auth: {
-    region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
-    userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
-    userPoolWebClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || ''
-  } as any, // Add this type assertion to fix the error
-  API: {
-    GraphQL: {
-      endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
-      region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
-      defaultAuthMode: "userPool" // Use Cognito user pool authentication
-    }
-  }
-});
-
-// Generate client after configuration
-const client = generateClient();
-const ACCOUNT_DETAILS_ENABLED = true;
-
 export default function SignupPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    address: "",
-    city: "",
-    state: "",
-    zipCode: "",
-  }); // FIXED: Missing closing parenthesis
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [client, setClient] = useState(null);
+
+  // Configure Amplify only in useEffect
+  useEffect(() => {
+    Amplify.configure({
+      Auth: {
+        Cognito: {
+          userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
+          userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
+          loginWith: {
+            email: true,
+            phone: false,
+            username: false
+          }
+        }
+      },
+      region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+      API: {
+        GraphQL: {
+          endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
+          region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+          defaultAuthMode: "userPool"
+        }
+      }
+    });
+    // Create client inside useEffect
+    setClient(generateClient());
+  }, []);
 
   const handleChange = (e: { target: { name: any; value: any; }; }) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === "email") setEmail(value);
+    if (name === "password") setPassword(value);
+    if (name === "confirmPassword") setConfirmPassword(value);
   };
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
@@ -56,34 +58,34 @@ export default function SignupPage() {
     setLoading(true);
     setError("");
 
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
     try {
       // 1. Create Cognituser
       const { isSignUpComplete, userId, nextStep } = await signUp({
-        username: formData.email,
-        password: formData.password,
+        username: email,
+        password: password,
         options: {
           userAttributes: {
-            email: formData.email,
-            name: formData.name,
+            email: email,
           }
         }
       });
 
       // 2. Use the client to create account detail
-      if (ACCOUNT_DETAILS_ENABLED) {
+      if (client) {
         try {
           // Check if the mutation exists before calling it
           if (typeof (client.mutations as any).createAccountDetail === 'function') {
             // Only call if the function exists
             await (client.mutations as any).createAccountDetail({
               input: {
-                name: formData.name,
-                email: formData.email,
-                address: formData.address,
-                city: formData.city,
-                state: formData.state,
-                zipCode: formData.zipCode,
-                userId: userId || formData.email,
+                email: email,
+                userId: userId || email,
                 createdAt: new Date().toISOString()
               }
             });
@@ -97,7 +99,7 @@ export default function SignupPage() {
       }
 
       // 3. Redirect to verification page or appropriate next step
-      router.push(`/auth/verify?email=${encodeURIComponent(formData.email)}`);
+      router.push(`/auth/verify?email=${encodeURIComponent(email)}`);
     } catch (error) {
       console.error("Sign up error:", error);
       setError((error as any).message || "Failed to create account. Please try again.");
@@ -145,21 +147,6 @@ export default function SignupPage() {
             )}
             
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Name field */}
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter your full name"
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
-                />
-              </div>
-              
               {/* Email field */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
@@ -167,7 +154,7 @@ export default function SignupPage() {
                   type="email"
                   id="email"
                   name="email"
-                  value={formData.email}
+                  value={email}
                   onChange={handleChange}
                   required
                   placeholder="Enter your email address"
@@ -182,7 +169,7 @@ export default function SignupPage() {
                   type="password"
                   id="password"
                   name="password"
-                  value={formData.password}
+                  value={password}
                   onChange={handleChange}
                   required
                   placeholder="Create a strong password"
@@ -190,63 +177,20 @@ export default function SignupPage() {
                 />
                 <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters with letters and numbers</p>
               </div>
-              
-              {/* Address field */}
+
+              {/* Confirm Password field */}
               <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
                 <input
-                  type="text"
-                  id="address"
-                  name="address"
-                  value={formData.address}
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={confirmPassword}
                   onChange={handleChange}
                   required
-                  placeholder="Enter your street address"
+                  placeholder="Confirm your password"
                   className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
                 />
-              </div>
-              
-              {/* City, State, Zip in one row */}
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">City</label>
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    required
-                    placeholder="City"
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">State</label>
-                  <input
-                    type="text"
-                    id="state"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleChange}
-                    required
-                    placeholder="State"
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">ZIP Code</label>
-                  <input
-                    type="text"
-                    id="zipCode"
-                    name="zipCode"
-                    value={formData.zipCode}
-                    onChange={handleChange}
-                    required
-                    placeholder="ZIP"
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
-                  />
-                </div>
               </div>
               
               {/* Terms and conditions */}

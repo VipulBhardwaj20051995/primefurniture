@@ -1,6 +1,5 @@
 "use client"; // MUST BE THE FIRST LINE (except comments)
 
-// Then add dynamic export 
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
@@ -12,39 +11,14 @@ import Image from "next/image";
 import { Amplify } from 'aws-amplify';
 import { useAuthenticator } from "@aws-amplify/ui-react";
 
-// CORRECT CONFIGURATION - No duplicate Auth properties
-Amplify.configure({
-  Auth: {
-    // Use the new Cognito structure
-    Cognito: {
-      userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
-      userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
-      loginWith: {
-        email: true,
-        phone: false,
-        username: false
-      }
-    }
-  },
-  region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
-  API: {
-    GraphQL: {
-      endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
-      region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
-      defaultAuthMode: "userPool"
-    }
-  }
-} as any);
-
-const client = generateClient();
-const ACCOUNT_DETAILS_ENABLED = true;
-
 export default function Page() {
   const router = useRouter();
   const { authStatus } = useAuthenticator((context) => [context.authStatus]);
   const [isLoading, setIsLoading] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [client, setClient] = useState(null);
   
-  // Redirect to home if already authenticated
   useEffect(() => {
     if (authStatus === "authenticated") {
       router.push("/");
@@ -52,6 +26,31 @@ export default function Page() {
       setIsLoading(false);
     }
   }, [authStatus, router]);
+
+  useEffect(() => {
+    Amplify.configure({
+      Auth: {
+        Cognito: {
+          userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
+          userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
+          loginWith: {
+            email: true,
+            phone: false,
+            username: false
+          }
+        }
+      },
+      region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+      API: {
+        GraphQL: {
+          endpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || '',
+          region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+          defaultAuthMode: "userPool"
+        }
+      }
+    });
+    setClient(generateClient());
+  }, []);
   
   if (isLoading) {
     return (
@@ -145,6 +144,8 @@ export default function Page() {
                   id="email"
                   placeholder="Enter your email address"
                   className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               
@@ -158,6 +159,8 @@ export default function Page() {
                   id="password"
                   placeholder="Enter your password"
                   className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               
