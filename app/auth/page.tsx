@@ -5,7 +5,8 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { confirmSignUp, autoSignIn } from "@aws-amplify/auth";
+import { confirmSignUp, autoSignIn, signIn } from "@aws-amplify/auth";
+import { generateClient } from "@aws-amplify/api";
 import Link from "next/link";
 import Image from "next/image";
 import { Amplify } from 'aws-amplify';
