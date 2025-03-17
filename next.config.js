@@ -4,8 +4,8 @@ const nextConfig = {
   images: {
     unoptimized: true, // Required for static deployment
   },
-  // No experimental settings - they caused errors
-  staticPageGenerationTimeout: 1, // 1 second timeout for static generation
+  // Use a much higher timeout if you want to keep this setting
+  staticPageGenerationTimeout: 60, // 60 seconds should be plenty
 };
 
 module.exports = nextConfig;

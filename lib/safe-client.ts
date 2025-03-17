@@ -3,8 +3,11 @@ import { Amplify } from 'aws-amplify';
 
 // Safe version that won't break SSR
 export function configureAmplify() {
-  // Only run configuration in browser environment
-  if (typeof window !== 'undefined') {
+  // Safety check for SSR
+  if (typeof window === 'undefined') return false;
+  
+  try {
+    // Wrap in try/catch to prevent uncaught exceptions
     Amplify.configure({
       Auth: {
         Cognito: {
@@ -13,7 +16,17 @@ export function configureAmplify() {
           loginWith: {
             email: true,
             phone: false,
-            username: false
+            username: false,
+            // Only add OAuth if domain is configured
+            ...(process.env.NEXT_PUBLIC_AUTH_DOMAIN ? {
+              oauth: {
+                domain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
+                scopes: ['email', 'profile', 'openid'],
+                redirectSignIn: [process.env.NEXT_PUBLIC_REDIRECT_SIGN_IN || ''],
+                redirectSignOut: [process.env.NEXT_PUBLIC_REDIRECT_SIGN_OUT || ''],
+                responseType: 'code'
+              }
+            } : {})
           }
         }
       },
@@ -24,8 +37,10 @@ export function configureAmplify() {
           defaultAuthMode: "userPool"
         }
       }
-    } as any);
+    });
     return true;
+  } catch (error) {
+    console.error("Failed to configure Amplify:", error);
+    return false;
   }
-  return false;
 }
