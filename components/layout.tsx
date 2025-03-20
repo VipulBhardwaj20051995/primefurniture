@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   Heading,
@@ -13,11 +13,49 @@ import {
   useAuthenticator,
 } from "@aws-amplify/ui-react";
 import { Link } from "@heroui/link";
-
 import { I18n } from 'aws-amplify/utils';
 import { translations } from '@aws-amplify/ui-react';
+import { Amplify } from 'aws-amplify';
 
 export const Layout = ({ children }: React.PropsWithChildren) => {
+  const [isConfigured, setIsConfigured] = useState(false);
+  
+  // Configure Amplify on component mount
+  useEffect(() => {
+    // Only run in browser environment
+    if (typeof window === 'undefined') return;
+    
+    try {
+      // Configure Amplify specifically for the Authenticator component
+      Amplify.configure({
+        Auth: {
+          Cognito: {
+            userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
+            userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
+            loginWith: {
+              email: true,
+              phone: false,
+              username: false,
+              // Properly configure oauth for social login
+              oauth: {
+                domain: process.env.NEXT_PUBLIC_AUTH_DOMAIN || '',
+                scopes: ['email', 'profile', 'openid'],
+                redirectSignIn: [process.env.NEXT_PUBLIC_REDIRECT_SIGN_IN || window.location.origin],
+                redirectSignOut: [process.env.NEXT_PUBLIC_REDIRECT_SIGN_OUT || window.location.origin],
+                responseType: 'code'
+              }
+            }
+          }
+        }
+      });
+      
+      setIsConfigured(true);
+    } catch (error) {
+      console.error("Failed to configure Amplify:", error);
+    }
+  }, []);
+  
+  // Setup translations
   I18n.putVocabularies(translations);
   I18n.setLanguage('en');
   I18n.putVocabularies({

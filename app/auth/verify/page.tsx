@@ -82,7 +82,9 @@ function VerifyForm() {
               required
               placeholder="Enter verification code"
               className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
-            />
+            />            git add lib/amplify.ts
+            git commit -m "Fix Amplify configuration with hardcoded values"
+            git push
           </div>
           
           <button

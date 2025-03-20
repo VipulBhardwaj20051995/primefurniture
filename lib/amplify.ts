@@ -9,8 +9,6 @@ export function configureAmplify() {
   }
   
   try {
-    // These values are hardcoded for debugging. They match what you shared.
-    // In production, we'd use process.env values, but for some reason they're not loading
     const config = {
       userPoolId: 'us-east-1_lNizU5HX4',
       userPoolClientId: '1grrsj5ck4p91if1ksto3dn0hp',
@@ -20,14 +18,6 @@ export function configureAmplify() {
       redirectSignOut: 'https://dev.bedsflooring.com/'
     };
     
-    // Log for debugging
-    console.log('Configuring Amplify with:', {
-      userPoolId: config.userPoolId,
-      userPoolClientId: config.userPoolClientId,
-      region: config.region
-    });
-    
-    // Configure Amplify
     Amplify.configure({
       Auth: {
         Cognito: {

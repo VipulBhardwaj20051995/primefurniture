@@ -3,7 +3,7 @@ import { Amplify } from 'aws-amplify';
 
 // Safe version that won't break SSR
 export function configureAmplify() {
-  // Safety check for SSR
+  // Only run in browser
   if (typeof window === 'undefined') return false;
   
   try {
@@ -17,16 +17,17 @@ export function configureAmplify() {
             email: true,
             phone: false,
             username: false,
-            // Only add OAuth if domain is configured
-            ...(process.env.NEXT_PUBLIC_AUTH_DOMAIN ? {
-              oauth: {
-                domain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
-                scopes: ['email', 'profile', 'openid'],
-                redirectSignIn: [process.env.NEXT_PUBLIC_REDIRECT_SIGN_IN || ''],
-                redirectSignOut: [process.env.NEXT_PUBLIC_REDIRECT_SIGN_OUT || ''],
-                responseType: 'code'
-              }
-            } : {})
+            // Remove oauth configuration entirely if not using social logins
+            // Only uncomment this if you're actually using OAuth providers
+            /*
+            oauth: {
+              domain: process.env.NEXT_PUBLIC_AUTH_DOMAIN || '',
+              scopes: ['email', 'profile', 'openid'],
+              redirectSignIn: [process.env.NEXT_PUBLIC_REDIRECT_SIGN_IN || ''],
+              redirectSignOut: [process.env.NEXT_PUBLIC_REDIRECT_SIGN_OUT || ''],
+              responseType: 'code'
+            }
+            */
           }
         }
       },
@@ -37,7 +38,7 @@ export function configureAmplify() {
           defaultAuthMode: "userPool"
         }
       }
-    });
+    } as any);
     return true;
   } catch (error) {
     console.error("Failed to configure Amplify:", error);
