@@ -1,16 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone', // Required for Amplify
+  output: 'standalone',
   images: {
-    unoptimized: true, // Required for static deployment
+    unoptimized: true,
   },
-  // Add a more generous timeout
-  staticPageGenerationTimeout: 180, // 60 seconds should be plenty
-  // Add reliable error handling
-  onDemandEntries: {
-    maxInactiveAge: 60 * 60 * 1000,
-    pagesBufferLength: 5,
-  }
+  // Remove any complex configurations
 };
 
 module.exports = nextConfig;
