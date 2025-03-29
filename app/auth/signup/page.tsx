@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { signUp } from "@aws-amplify/auth";
 import Link from "next/link";
 import Image from "next/image";
-import { initializeAmplify } from "@/lib/amplify-config";
+import { initializeAmplify, calculateSecretHash } from "@/lib/amplify-config";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -48,6 +48,19 @@ export default function SignupPage() {
     try {
       console.log("Attempting signup for:", email);
       
+      // Get client info from window
+      const clientInfo = (window as any).awsClientInfo || {
+        clientId: "1grrsj5ck4p91if1ksto3dn0hp",
+        clientSecret: "YOUR_CLIENT_SECRET_HERE" // Get from AWS Console
+      };
+      
+      // Calculate SECRET_HASH
+      const secretHash = calculateSecretHash(
+        email, 
+        clientInfo.clientId, 
+        clientInfo.clientSecret
+      );
+      
       // Sign up the user
       const { isSignUpComplete, userId, nextStep } = await signUp({
         username: email,
@@ -55,15 +68,32 @@ export default function SignupPage() {
         options: {
           userAttributes: {
             email,
-            name // Store the name as a user attribute
+            name
           },
           autoSignIn: true
         }
       });
       
-      // Store user info in localStorage for persistence
+      // Store user profile in localStorage
       localStorage.setItem("userName", name);
       localStorage.setItem("userEmail", email);
+      
+      // Also store in a more persistent way - you could use a database here
+      // Create a user profile API call - simulated here
+      try {
+        const userProfile = {
+          email,
+          name,
+          createdAt: new Date().toISOString()
+        };
+        
+        // Save to localStorage as a persistent store (in real app, use DB)
+        const profiles = JSON.parse(localStorage.getItem("userProfiles") || "{}");
+        profiles[email] = userProfile;
+        localStorage.setItem("userProfiles", JSON.stringify(profiles));
+      } catch (profileError) {
+        console.error("Failed to save profile:", profileError);
+      }
       
       console.log("Signup successful, redirecting to verification");
       
@@ -72,6 +102,7 @@ export default function SignupPage() {
       
     } catch (error) {
       console.error("Sign up error:", error);
+      
       // More specific error handling
       if (error instanceof Error) {
         if (error.message.includes("password")) {

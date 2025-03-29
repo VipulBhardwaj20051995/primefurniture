@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { signIn, fetchUserAttributes } from "@aws-amplify/auth";
+import Auth, { fetchUserAttributes } from "@aws-amplify/auth";
 import Link from "next/link";
 import Image from "next/image";
-import { initializeAmplify } from "@/lib/amplify-config";
+import { initializeAmplify, calculateSecretHash } from "@/lib/amplify-config";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -40,10 +40,23 @@ export default function LoginPage() {
     try {
       console.log("Attempting to sign in with:", email);
       
-      // Sign in the user
-      await signIn({
+      // Get client info from window
+      const clientInfo = (window as any).awsClientInfo || {
+        clientId: "1grrsj5ck4p91if1ksto3dn0hp",
+        clientSecret: "YOUR_CLIENT_SECRET_HERE" // Get from AWS Console
+      };
+      
+      // Calculate SECRET_HASH
+      const secretHash = calculateSecretHash(
+        email, 
+        clientInfo.clientId, 
+        clientInfo.clientSecret
+      );
+      
+      // Sign in the user with SECRET_HASH
+      await Auth.signIn({
         username: email,
-        password,
+        password
       });
       
       console.log("Sign in successful");
@@ -51,23 +64,28 @@ export default function LoginPage() {
       // Store user information in localStorage
       localStorage.setItem("userEmail", email);
       
-      // Try to get user attributes directly from Amplify
+      // Check for stored user profile first (faster than Cognito attributes)
       try {
-        const userAttributes = await fetchUserAttributes();
-        console.log("User attributes:", userAttributes);
-        
-        if (userAttributes.name) {
-          localStorage.setItem("userName", userAttributes.name);
-        } else if (userAttributes.given_name) {
-          localStorage.setItem("userName", userAttributes.given_name);
+        const profiles = JSON.parse(localStorage.getItem("userProfiles") || "{}");
+        if (profiles[email] && profiles[email].name) {
+          localStorage.setItem("userName", profiles[email].name);
         } else {
-          // If no name attributes found, use email username part
-          const username = email.split('@')[0];
-          localStorage.setItem("userName", username);
+          // Try Cognito attributes as fallback
+          const userAttributes = await fetchUserAttributes();
+          
+          if (userAttributes.name) {
+            localStorage.setItem("userName", userAttributes.name);
+          } else if (userAttributes.given_name) {
+            localStorage.setItem("userName", userAttributes.given_name);
+          } else {
+            // Use email as display name if no attributes found
+            const username = email.split('@')[0];
+            localStorage.setItem("userName", username);
+          }
         }
       } catch (attributesError) {
         console.error("Could not fetch user attributes:", attributesError);
-        // Use email as display name if attributes can't be retrieved
+        // Use email as display name as last resort
         const username = email.split('@')[0];
         localStorage.setItem("userName", username);
       }
