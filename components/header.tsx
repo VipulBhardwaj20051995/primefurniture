@@ -1,235 +1,127 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import Link from 'next/link';
-import Image from 'next/image';
-import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
-import { FiUser, FiMenu, FiX, FiSearch } from "react-icons/fi";
-import { useState, useEffect } from "react";
-import { siteConfig } from "@/config/site";
-import { products } from "@/data/products"; // Import products data
-import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
+import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
+import { signOut } from "@aws-amplify/auth";
+import { initializeAmplify } from "@/lib/amplify-config";
 
-// Define proper types
-interface Product {
-  id: string;
-  name: string;
-  description?: string;
-  price: number;
-  image: string;
-  category: string;
-}
-
-export const Header = () => {
+export function Header() {
   const router = useRouter();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<Product[]>([]);
-  const [isProductsLoaded, setIsProductsLoaded] = useState(false);
+  const pathname = usePathname();
+  const [userName, setUserName] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   
-  // Ensure products are available
-  useEffect(() => {
-    if (products && Array.isArray(products)) {
-      setIsProductsLoaded(true);
-    }
-  }, []);
-  
-  // Search products functionality
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    
-    if (query.trim().length > 1 && isProductsLoaded) {
-      try {
-        const filtered = products.filter(product => 
-          product?.name?.toLowerCase().includes(query.toLowerCase()) ||
-          (product?.description && product.description.toLowerCase().includes(query.toLowerCase()))
-        ).slice(0, 5); // Show max 5 results
-        setSearchResults(filtered);
-      } catch (error) {
-        console.error("Error filtering products:", error);
-        setSearchResults([]);
-      }
-    } else {
-      setSearchResults([]);
+  // Function to update cart count
+  const updateCartCount = () => {
+    if (typeof window !== 'undefined') {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      setCartCount(cart.length);
     }
   };
   
-  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery("");
-      setSearchResults([]);
+  useEffect(() => {
+    // Check if user is logged in by looking for stored name/email
+    const storedName = localStorage.getItem("userName");
+    const storedEmail = localStorage.getItem("userEmail");
+    
+    if (storedName || storedEmail) {
+      setUserName(storedName || storedEmail?.split('@')[0] || "User");
+      setIsLoggedIn(true);
+    }
+    
+    // Get initial cart count
+    updateCartCount();
+    
+    // Set up event listener for cart updates
+    window.addEventListener('storage', updateCartCount);
+    
+    // Custom event for cart updates from other components
+    window.addEventListener('cartUpdated', updateCartCount);
+    
+    // Cleanup listener
+    return () => {
+      window.removeEventListener('storage', updateCartCount);
+      window.removeEventListener('cartUpdated', updateCartCount);
+    };
+  }, []);
+  
+  // Special effect for paths that might change the cart
+  useEffect(() => {
+    // Update cart count when pathname changes (e.g., after checkout)
+    updateCartCount();
+  }, [pathname]);
+  
+  const handleSignOut = async () => {
+    try {
+      // Initialize Amplify if not already done
+      initializeAmplify();
+      
+      // Sign out the user
+      await signOut();
+      
+      // Clear stored user data
+      localStorage.removeItem("userName");
+      localStorage.removeItem("userEmail");
+      
+      // Update state
+      setIsLoggedIn(false);
+      setUserName("");
+      
+      // Redirect to home page
+      router.push("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
     }
   };
 
   return (
-    <header className="w-full bg-white shadow-sm sticky top-0 z-40">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <span className="text-2xl font-bold text-gray-900">Prime Furniture</span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {siteConfig.navItems.map((item) => (
-              <Link 
-                key={item.href} 
-                href={item.href}
-                className="text-gray-600 hover:text-black transition-colors"
+    <header className="bg-white shadow-sm sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        <Link href="/" className="text-xl font-bold text-primary">
+          Maibury
+        </Link>
+        
+        <nav className="hidden md:flex space-x-8">
+          <Link href="/" className="text-gray-700 hover:text-primary">Home</Link>
+          <Link href="/shop" className="text-gray-700 hover:text-primary">Shop</Link>
+          <Link href="/categories" className="text-gray-700 hover:text-primary">Categories</Link>
+          <Link href="/about" className="text-gray-700 hover:text-primary">About</Link>
+          <Link href="/contact" className="text-gray-700 hover:text-primary">Contact</Link>
+        </nav>
+        
+        <div className="flex items-center space-x-4">
+          {isLoggedIn ? (
+            <div className="flex items-center">
+              <span className="text-gray-700 mr-3">Hello, {userName}</span>
+              <button 
+                onClick={handleSignOut}
+                className="text-sm px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
               >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Search Bar - Desktop */}
-          <div className="hidden md:block relative flex-grow max-w-md mx-4">
-            <Popover placement="bottom">
-              <form onSubmit={handleSearchSubmit} className="w-full">
-                <PopoverTrigger>
-                  <Input
-                    placeholder="Search products..."
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    startContent={<FiSearch />}
-                    className="w-full"
-                  />
-                </PopoverTrigger>
-              </form>
-              {searchResults.length > 0 && (
-                <PopoverContent className="w-full max-w-md p-2">
-                  <ul className="divide-y">
-                    {searchResults.map(product => (
-                      <li key={product.id} className="py-2">
-                        <Link 
-                          href={`/product/${product.id}`}
-                          className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded"
-                          onClick={() => setSearchResults([])}
-                        >
-                          <div className="w-12 h-12 relative">
-                            {product.image && (
-                              <Image 
-                                src={product.image} 
-                                alt={product.name}
-                                fill
-                                sizes="48px"
-                                className="object-cover rounded"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.src = "/images/placeholder.jpg"; // Fallback image
-                                }}
-                              />
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-medium">{product.name}</p>
-                            <p className="text-sm text-gray-500">${product.price}</p>
-                          </div>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </PopoverContent>
-              )}
-            </Popover>
-          </div>
-
-          {/* Account & Mobile Menu Toggle */}
-          <div className="flex items-center space-x-4">
-            {/* Account */}
-            <Button isIconOnly radius="full" variant="light" onPress={() => router.push("/auth")}>
-              <FiUser size={24} />
-            </Button>
-
-            {/* Mobile Menu Toggle */}
-            <Button 
-              isIconOnly 
-              radius="full" 
-              variant="light" 
-              className="md:hidden"
-              onPress={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-            </Button>
-          </div>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <nav className="md:hidden mt-4 pt-4 border-t">
-            {/* Mobile Search */}
-            <div className="mb-4">
-              <form onSubmit={handleSearchSubmit}>
-                <Input
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  startContent={<FiSearch />}
-                  className="w-full"
-                />
-              </form>
-              {searchResults.length > 0 && (
-                <div className="mt-2 border rounded-md shadow-sm">
-                  <ul className="divide-y">
-                    {searchResults.map(product => (
-                      <li key={product.id} className="py-2 px-3">
-                        <Link 
-                          href={`/product/${product.id}`}
-                          className="flex items-center gap-3"
-                          onClick={() => {
-                            setSearchResults([]);
-                            setIsMenuOpen(false);
-                          }}
-                        >
-                          <div className="w-10 h-10 relative">
-                            {product.image && (
-                              <Image 
-                                src={product.image} 
-                                alt={product.name}
-                                fill
-                                sizes="40px"
-                                className="object-cover rounded"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.src = "/images/placeholder.jpg"; // Fallback image
-                                }}
-                              />
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-medium">{product.name}</p>
-                            <p className="text-sm text-gray-500">${product.price}</p>
-                          </div>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+                Sign Out
+              </button>
             </div>
-
-            {/* Navigation Links */}
-            <ul className="flex flex-col space-y-4">
-              {siteConfig.navItems.map((item) => (
-                <li key={item.href}>
-                  <Link 
-                    href={item.href}
-                    className="text-gray-600 hover:text-black transition-colors block py-2"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )}
+          ) : (
+            <Link 
+              href="/auth" 
+              className="text-sm px-3 py-1 bg-primary text-white rounded hover:bg-primary-dark"
+            >
+              Sign In
+            </Link>
+          )}
+          <Link href="/checkout" className="relative">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {cartCount > 99 ? '99+' : cartCount}
+              </span>
+            )}
+          </Link>
+        </div>
       </div>
     </header>
   );
-};
+}

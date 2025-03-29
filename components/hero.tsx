@@ -69,9 +69,7 @@ export const Hero = () => {
 
         {/* Content */}
         <div className="relative z-10 max-w-3xl text-white text-left px-6 md:px-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-3">
-            Up to 10% off Voucher
-          </h1>
+          <h1 className="text-5xl font-bold">Welcome to Maibury</h1>
           <p className="text-base md:text-lg mb-5">
             Explore our premium furniture collection and upgrade your home today.
           </p>
